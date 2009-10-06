@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<h1>Welcome</h1>
+
+<form method="post" action="">
+<p>
+{{ url_form.url.label }}<br />
+{{ url_form.url }}
+<input type="submit" value="Transcribe!"/>
+{% if url_form.errors.url %}
+<span class="admonition error">{{ url_form.errors.url.0 }}</span>
+{% endif %}
+</p>
+</form>
+
+{% endblock %}

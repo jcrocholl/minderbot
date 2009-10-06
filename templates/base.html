@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}"
+xml:lang="{% firstof LANGUAGE_CODE 'en' %}"
+lang="{% firstof LANGUAGE_CODE 'en' %}">
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+<title>{% block title %}{% endblock %}</title>
+{% block css %}
+<link rel="stylesheet" type="text/css"  media="screen, projection" href="{{ MEDIA_URL }}combined-{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}.css" />
+<link rel="stylesheet" type="text/css"  media="print" href="{{ MEDIA_URL }}combined-print-{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}.css" />
+<!--[if IE]>
+<link rel="stylesheet" type="text/css" media="screen, projection" href="{{ MEDIA_URL }}ie.css">
+<![endif]-->
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="{{ MEDIA_URL }}combined-{{ LANGUAGE_CODE }}.js"></script>
+{% endblock %}
+
+{% block extra-head %}{% endblock %}
+</head>
+
+<body>
+<div class="container">
+{% block header %}
+<div id="menu" class="span-16">
+<a href="/">Home</a>
+| <a href="/sources/">Sources</a>
+| <a href="/chunks/">Chunks</a>
+| <a href="/feedback/">Feedback</a>
+</div>
+<div id="login" class="span-8 last right">
+{% if user.is_authenticated %}
+Welcome, {{ user.username }}!
+<a href="{% url django.contrib.auth.views.logout %}">Logout</a>
+{% else %}
+<a href="{% url django.contrib.auth.views.login %}">Login</a> |
+<a href="{% url registration.views.register %}">Register</a>
+{% endif %}
+</div>
+{% endblock %}
+<hr class="space" />
+<div id="content" class="span-17">
+{% block content-header %}
+{% if error %}<div class="error">{{ error }}</div>{% endif %}
+{% if info %}<div class="info">{{ info }}</div>{% endif %}
+{% if messages %}
+{% for message in messages %}
+<div class="info">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endblock %}
+{% block content %}{% endblock %}
+</div>
+<div id="feedback" class="span-6 prepend-1 last">
+{% load feedback_tags %}
+{% feedback_form request %}
+{% feedback_recently request %}
+</div>
+<hr />
+<div id="footer" class="span-24 last center">
+<a href="http://validator.w3.org/check?uri=referer" rel="nofollow">XHTML</a> |
+<a href="http://jigsaw.w3.org/css-validator/check/referer" rel="nofollow">CSS</a>
+</div>
+</div>
+</body>
+</html>
