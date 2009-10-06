@@ -6,6 +6,8 @@
 <h1>Suggestions</h1>
 
 {% for suggestion in suggestion_list %}
-<p>{{ suggestion }}</p>
+<p><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a><br />
+{% for tag in suggestion.tags %} {{ tag }}{% endfor %}
+</p>
 {% endfor %}
 {% endblock %}
