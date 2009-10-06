@@ -5,7 +5,7 @@ import os, sys
 
 DUMP_COMMAND = './manage.py dumpdata --format=json --indent=2 --remote %(app)s > fixtures/%(app)s.json'
 
-APPS = 'auth registration feedback sources chunks'.split()
+APPS = 'auth registration feedback'.split()
 if len(sys.argv) > 1:
     APPS = sys.argv[1:]
 
