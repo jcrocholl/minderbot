@@ -39,7 +39,7 @@ SECRET_KEY = '%7317$0d_3qpj7s_h3_ts_p+u&p&&#puc(&2p&lm=!$(uai@3f'
 #PROFILE_PATTERN = 'ext.db..+\((?:get|get_by_key_name|fetch|count|put)\)'
 
 # Enable I18N and set default language to 'en'
-USE_I18N = True
+USE_I18N = False
 LANGUAGE_CODE = 'en'
 
 # Restrict supported languages (and JS media generation)
