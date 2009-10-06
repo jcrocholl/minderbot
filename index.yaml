@@ -10,7 +10,21 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-# Used 23 times in query history.
+# Unused in query history -- copied from input.
+- kind: django_admin_log
+  properties:
+  - name: content_type
+  - name: object_id
+  - name: action_time
+
+# Used 3 times in query history.
+- kind: django_admin_log
+  properties:
+  - name: user
+  - name: action_time
+    direction: desc
+
+# Used 20 times in query history.
 - kind: feedback_feedback
   properties:
   - name: page
@@ -19,7 +33,7 @@ indexes:
   - name: submitted
     direction: desc
 
-# Used 4 times in query history.
+# Used once in query history.
 - kind: feedback_feedback
   properties:
   - name: points
