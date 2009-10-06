@@ -10,10 +10,18 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-# Used 5 times in query history.
+# Used 23 times in query history.
 - kind: feedback_feedback
   properties:
   - name: page
+  - name: points
+    direction: desc
+  - name: submitted
+    direction: desc
+
+# Used 4 times in query history.
+- kind: feedback_feedback
+  properties:
   - name: points
     direction: desc
   - name: submitted
