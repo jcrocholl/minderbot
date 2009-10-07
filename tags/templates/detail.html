@@ -5,9 +5,9 @@
 {% block content %}
 <h1>{{ tag|capfirst }} suggestions</h1>
 
-<p>
+<ul>
 {% for suggestion in suggestion_list %}
-<a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>
+<li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a></li>
 {% endfor %}
-</p>
+</ul>
 {% endblock %}
