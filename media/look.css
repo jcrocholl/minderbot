@@ -6,7 +6,11 @@ h2 {
   margin-bottom: 0;
 }
 
-p,th,td {
+ul {
+  margin-bottom: 8px;
+}
+
+p,th,td,li {
   font-size: 14px;
   line-height: 18px;
 }

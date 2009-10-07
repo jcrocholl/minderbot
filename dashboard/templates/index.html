@@ -10,40 +10,43 @@ It is visible for staff members only.</p>
 
 <div class="span-6">
 <h2>Latest suggestions</h2>
-<p>
+<ul>
 {% for suggestion in suggestion_list %}
-<a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a><br />
+<li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a></li>
 {% endfor %}
-<span class="small gray">
-{{ suggestion_count_24h }} in the last 24 hours,<br />
-{{ suggestion_count_7days }} in the last 7 days,<br />
+</ul>
+<p class="small gray">
+{{ suggestion_count_24h }} in 24 hours,
+{{ suggestion_count_7days }} in 7 days,
 {{ suggestion_count }} total
-</span>
 </p>
 </div>
 
 <div class="span-6">
 <h2>Latest feedback</h2>
-<p>
+<ul>
 {% for feedback in feedback_list %}
-<a href="{{ feedback.page }}">{{ feedback }}</a><br />
+<li><a href="{{ feedback.page }}">{{ feedback }}</a></li>
 {% endfor %}
-<span class="small gray">
-{{ feedback_count_24h }} in the last 24 hours,<br />
-{{ feedback_count_7days }} in the last 7 days,<br />
+</ul>
+<p class="small gray">
+{{ feedback_count_24h }} in 24 hours,
+{{ feedback_count_7days }} in 7 days,
 {{ feedback_count }} total
-</span>
 </p>
 </div>
 
 <div class="span-5 last">
 <h2>Newest users</h2>
-<p>
-{% for user in user_list %}{{ user.username }}
-{% if user.first_name %}({{ user.first_name }}){% endif %}<br />{% endfor %}
-<span class="small gray">
-{{ user_count_24h }} in the last 24 hours,<br />
-{{ user_count_7days }} in the last 7 days,<br />
+<ul>
+{% for user in user_list %}
+<li>{{ user.username }}
+{% if user.first_name %}({{ user.first_name }}){% endif %}</li>
+{% endfor %}
+</ul>
+<p class="small gray">
+{{ user_count_24h }} in 24 hours,
+{{ user_count_7days }} in 7 days,
 {{ user_count }} total
 </span>
 </p>
