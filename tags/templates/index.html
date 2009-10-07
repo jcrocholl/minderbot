@@ -7,7 +7,7 @@
 
 <p>
 {% for tag in tag_list %}
-{{ tag }}
+<a href="{{ tag.get_absolute_url }}" style="font-size:{{ tag.get_font_size }}">{{ tag }}</a>
 {% endfor %}
 </p>
 {% endblock %}
