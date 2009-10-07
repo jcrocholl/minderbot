@@ -55,6 +55,7 @@ def index(request):
 def submit_suggestion(request, suggestion_form):
     tag_list = suggestion_form.cleaned_data['tags'].split()
     suggestion = Suggestion(
+        author=request.user,
         key_name=suggestion_form.cleaned_data['slug'],
         title=suggestion_form.cleaned_data['title'],
         tags=tag_list,
@@ -64,7 +65,7 @@ def submit_suggestion(request, suggestion_form):
         tag = Tag.get_by_key_name(tag_name)
         if tag is None:
             tag = Tag(key_name=tag_name, count=0)
-        tag.suggestions.append(suggestion.key())
+        tag.suggestions.append(suggestion.key().name())
         tag.count += 1
         tag.put()
     return HttpResponseRedirect(suggestion.get_absolute_url())

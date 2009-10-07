@@ -1,5 +1,3 @@
-from google.appengine.ext import db
-
 from django.http import HttpResponseRedirect
 
 from ragendja.template import render_to_response
@@ -16,5 +14,5 @@ def index(request):
 
 def detail(request, key_name):
     tag = get_object_or_404(Tag, key_name=key_name)
-    suggestion_list = db.get(tag.suggestions)
+    suggestion_list = tag.get_suggestions()
     return render_to_response(request, 'tags/detail.html', locals())
