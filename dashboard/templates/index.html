@@ -5,15 +5,56 @@
 {% block content %}
 <h1>Dashboard</h1>
 
-<p>Latest suggestions ({{ suggestion_count }} total):<br />
-{% for suggestion in suggestion_list %}
-<a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>{% for tag in suggestion.tags %} {{ tag }}{% endfor %}<br />
-{% endfor %}</p>
+<p>This page shows the current system status.
+It is visible for staff members only.</p>
 
+<div class="span-6">
+<h2>Latest suggestions</h2>
+<p>
+{% for suggestion in suggestion_list %}
+<a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a><br />
+{% endfor %}
+<span class="small gray">
+{{ suggestion_count_24h }} in the last 24 hours,<br />
+{{ suggestion_count_7days }} in the last 7 days,<br />
+{{ suggestion_count }} total
+</span>
+</p>
+</div>
+
+<div class="span-6">
+<h2>Latest feedback</h2>
+<p>
+{% for feedback in feedback_list %}
+<a href="{{ feedback.page }}">{{ feedback }}</a><br />
+{% endfor %}
+<span class="small gray">
+{{ feedback_count_24h }} in the last 24 hours,<br />
+{{ feedback_count_7days }} in the last 7 days,<br />
+{{ feedback_count }} total
+</span>
+</p>
+</div>
+
+<div class="span-5 last">
+<h2>Newest users</h2>
+<p>
+{% for user in user_list %}{{ user.username }}
+{% if user.first_name %}({{ user.first_name }}){% endif %}<br />{% endfor %}
+<span class="small gray">
+{{ user_count_24h }} in the last 24 hours,<br />
+{{ user_count_7days }} in the last 7 days,<br />
+{{ user_count }} total
+</span>
+</p>
+</div>
+
+<div class="span-17 last">
 <form method="post" action="">
 <table>
 {{ suggestion_form }}
 <tr><th></th><td><input type="submit" value="Add suggestion"/></td></tr>
 </table>
 </form>
+</div>
 {% endblock %}
