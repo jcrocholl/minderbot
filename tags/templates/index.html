@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Tag Cloud{% endblock %}
+
+{% block content %}
+<h1>Tag Cloud</h1>
+
+<p>
+{% for tag in tag_list %}
+{{ tag }}
+{% endfor %}
+</p>
+{% endblock %}

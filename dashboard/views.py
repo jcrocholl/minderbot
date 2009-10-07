@@ -8,6 +8,7 @@ from ragendja.template import render_to_response
 from ragendja.auth.decorators import staff_only
 
 from suggestions.models import Suggestion
+from tags.models import Tag
 from feedback.models import Feedback
 
 RECENT_LIMIT = 5
@@ -47,10 +48,23 @@ def index(request):
     # Simple form to add new suggestions.
     suggestion_form = SuggestionForm(request.POST or None)
     if suggestion_form.is_valid():
-        suggestion = Suggestion(
-            key_name=suggestion_form.cleaned_data['slug'],
-            title=suggestion_form.cleaned_data['title'],
-            submitter=request.user)
-        suggestion.put()
-        return HttpResponseRedirect(suggestion.get_absolute_url())
+        return submit_suggestion(request, suggestion_form)
     return render_to_response(request, 'dashboard/index.html', locals())
+
+
+def submit_suggestion(request, suggestion_form):
+    tag_list = suggestion_form.cleaned_data['tags'].split()
+    suggestion = Suggestion(
+        key_name=suggestion_form.cleaned_data['slug'],
+        title=suggestion_form.cleaned_data['title'],
+        tags=tag_list,
+        submitter=request.user)
+    suggestion.put()
+    for tag_name in tag_list:
+        tag = Tag.get_by_key_name(tag_name)
+        if tag is None:
+            tag = Tag(key_name=tag_name, count=0)
+        tag.suggestions.append(suggestion.key())
+        tag.count += 1
+        tag.put()
+    return HttpResponseRedirect(suggestion.get_absolute_url())
