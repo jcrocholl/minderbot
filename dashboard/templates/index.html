@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>Dashboard</h1>
+
+<p>Latest suggestions:<br />
+{% for suggestion in suggestion_list %}
+<a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>{% for tag in suggestion.tags %} {{ tag }}{% endfor %}<br />
+{% endfor %}
+({{ suggestions_total }} total)</p>
+
+<form method="post" action="">
+<table>
+{{ suggestion_form }}
+<tr><th></th><td><input type="submit" value="Add suggestion"/></td></tr>
+</table>
+</form>
+{% endblock %}

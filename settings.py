@@ -103,6 +103,7 @@ INSTALLED_APPS = (
     'ragendja',
     'feedback',
     'welcome',
+    'dashboard',
     'suggestions',
     'registration',
     'override',
