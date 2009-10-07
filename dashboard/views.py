@@ -4,6 +4,8 @@ from django.http import HttpResponseRedirect
 from ragendja.template import render_to_response
 from ragendja.auth.decorators import staff_only
 
+from suggestions.models import Suggestion
+
 
 class SuggestionForm(forms.Form):
     """
@@ -19,6 +21,8 @@ class SuggestionForm(forms.Form):
 
 @staff_only
 def index(request):
+    suggestion_count = Suggestion.all().count()
+    suggestion_list = Suggestion.all().order('-created').fetch(10)
     suggestion_form = SuggestionForm(request.POST or None)
     if suggestion_form.is_valid():
         suggestion = Suggestion(

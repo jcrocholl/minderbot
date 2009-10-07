@@ -5,11 +5,10 @@
 {% block content %}
 <h1>Dashboard</h1>
 
-<p>Latest suggestions:<br />
+<p>Latest suggestions ({{ suggestion_count }} total):<br />
 {% for suggestion in suggestion_list %}
 <a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>{% for tag in suggestion.tags %} {{ tag }}{% endfor %}<br />
-{% endfor %}
-({{ suggestions_total }} total)</p>
+{% endfor %}</p>
 
 <form method="post" action="">
 <table>
