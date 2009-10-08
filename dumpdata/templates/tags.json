@@ -1,0 +1,11 @@
+[
+{% for tag in tag_list %}  {
+    "pk": "{{ tag.key }}",
+    "model": "tags.tag",
+    "fields": {
+      "created": "{{ tag.created|date:"Y-m-d H:i:s" }}",
+      "suggestions": ["{{ tag.suggestions|join:'", "' }}"]
+      "count": {{ tag.count }},
+    }
+  }{% if not forloop.last %},{% endif %}
+{% endfor %}]

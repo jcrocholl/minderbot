@@ -106,6 +106,7 @@ INSTALLED_APPS = (
     'suggestions',
     'tags',
     'dashboard',
+    'dumpdata',
     'registration',
     'override',
     'mediautils',

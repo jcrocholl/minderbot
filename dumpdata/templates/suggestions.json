@@ -1,0 +1,12 @@
+[
+{% for suggestion in suggestion_list %}  {
+    "pk": "{{ suggestion.key }}",
+    "model": "suggestions.suggestion",
+    "fields": {
+      "author": "{{ suggestion.author.username }}",
+      "created": "{{ suggestion.created|date:"Y-m-d H:i:s" }}",
+      "title": "{{ suggestion.title }}",
+      "tags": ["{{ suggestion.tags|join:'", "' }}"]
+    }
+  }{% if not forloop.last %},{% endif %}
+{% endfor %}]
