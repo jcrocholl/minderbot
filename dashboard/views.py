@@ -28,27 +28,32 @@ class SuggestionForm(forms.Form):
 
 @staff_only
 def index(request):
+    # Simple form to add new suggestions.
+    suggestion_form = SuggestionForm(request.POST or None)
+    if suggestion_form.is_valid():
+        return submit_suggestion(request, suggestion_form)
     day = datetime.now() - timedelta(hours=24)
     week = datetime.now() - timedelta(days=7)
-    # Registered user accounts.
-    user_count = User.all().count()
-    user_count_24h = User.all().filter('date_joined >', day).count()
-    user_count_7days = User.all().filter('date_joined >', week).count()
-    user_list = User.all().order('-date_joined').fetch(RECENT_LIMIT)
-    # Feedback for website improvements.
-    feedback_count = Feedback.all().count()
-    feedback_count_24h = Feedback.all().filter('submitted >', day).count()
-    feedback_count_7days = Feedback.all().filter('submitted >', week).count()
-    feedback_list = Feedback.all().order('-submitted').fetch(RECENT_LIMIT)
     # Reminder suggestions.
     suggestion_count = Suggestion.all().count()
     suggestion_count_24h = Suggestion.all().filter('created >', day).count()
     suggestion_count_7days = Suggestion.all().filter('created >', week).count()
     suggestion_list = Suggestion.all().order('-created').fetch(RECENT_LIMIT)
-    # Simple form to add new suggestions.
-    suggestion_form = SuggestionForm(request.POST or None)
-    if suggestion_form.is_valid():
-        return submit_suggestion(request, suggestion_form)
+    # Tags for suggestions.
+    tag_count = Tag.all().count()
+    tag_count_24h = Tag.all().filter('created >', day).count()
+    tag_count_7days = Tag.all().filter('created >', week).count()
+    tag_list = Tag.all().order('-created').fetch(RECENT_LIMIT * 4)
+    # Feedback for website improvements.
+    # feedback_count = Feedback.all().count()
+    # feedback_count_24h = Feedback.all().filter('submitted >', day).count()
+    # feedback_count_7days = Feedback.all().filter('submitted >', week).count()
+    # feedback_list = Feedback.all().order('-submitted').fetch(RECENT_LIMIT)
+    # Registered user accounts.
+    user_count = User.all().count()
+    user_count_24h = User.all().filter('date_joined >', day).count()
+    user_count_7days = User.all().filter('date_joined >', week).count()
+    user_list = User.all().order('-date_joined').fetch(RECENT_LIMIT)
     return render_to_response(request, 'dashboard/index.html', locals())
 
 

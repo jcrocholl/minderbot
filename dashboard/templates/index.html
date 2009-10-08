@@ -1,5 +1,17 @@
 {% extends "base.html" %}
 
+{% block extra-head %}
+<script type="text/javascript">
+$(document).ready(function() {
+  $('div#suggestion_form').hide();
+  $('a#suggestion_toggle').click( function() {
+    $('div#suggestion_form').slideToggle(500);
+    return false;
+  });
+});
+</script>
+{% endblock %}
+
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
@@ -10,49 +22,51 @@ It is visible for staff members only.</p>
 
 <div class="span-6">
 <h2>Latest suggestions</h2>
-<ul>
-{% for suggestion in suggestion_list %}
-<li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a></li>
-{% endfor %}
-</ul>
 <p class="small gray">
 {{ suggestion_count_24h }} in 24 hours,
 {{ suggestion_count_7days }} in 7 days,
 {{ suggestion_count }} total
 </p>
+<ul>
+{% for suggestion in suggestion_list %}
+<li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a></li>
+{% endfor %}
+</ul>
+<p><a id="suggestion_toggle" href="#">Add more?</a></p>
 </div>
 
 <div class="span-6">
-<h2>Latest feedback</h2>
-<ul>
-{% for feedback in feedback_list %}
-<li><a href="{{ feedback.page }}">{{ feedback }}</a></li>
-{% endfor %}
-</ul>
+<h2>Newest tags</h2>
 <p class="small gray">
-{{ feedback_count_24h }} in 24 hours,
-{{ feedback_count_7days }} in 7 days,
-{{ feedback_count }} total
+{{ tag_count_24h }} in 24 hours,
+{{ tag_count_7days }} in 7 days,
+{{ tag_count }} total
 </p>
+<p>
+{% for tag in tag_list %}
+<a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+{% endfor %}
+</p>
+</ul>
 </div>
 
 <div class="span-5 last">
 <h2>Newest users</h2>
-<ul>
-{% for user in user_list %}
-<li>{{ user.username }}
-{% if user.first_name %}({{ user.first_name }}){% endif %}</li>
-{% endfor %}
-</ul>
 <p class="small gray">
 {{ user_count_24h }} in 24 hours,
 {{ user_count_7days }} in 7 days,
 {{ user_count }} total
 </span>
 </p>
+<ul>
+{% for user in user_list %}
+<li>{{ user.username }}
+{% if user.first_name %}({{ user.first_name }}){% endif %}</li>
+{% endfor %}
+</ul>
 </div>
 
-<div class="span-17 last">
+<div class="span-17 last" id="suggestion_form">
 <form method="post" action="">
 <table>
 {{ suggestion_form }}
