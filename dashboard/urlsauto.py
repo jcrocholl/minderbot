@@ -4,4 +4,5 @@ import views
 
 urlpatterns = patterns('',
     (r'^$', views.index),
+    (r'^consistency/$', views.consistency),
 )

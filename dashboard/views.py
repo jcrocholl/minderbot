@@ -74,3 +74,21 @@ def submit_suggestion(request, suggestion_form):
         tag.count += 1
         tag.put()
     return HttpResponseRedirect(suggestion.get_absolute_url())
+
+
+def consistency(request):
+    suggestion_list = Suggestion.all().fetch(1000)
+    suggestion_names = [s.key().name() for s in suggestion_list]
+    tag_list = Tag.all().fetch(1000)
+    tag_names = [tag.key().name() for tag in tag_list]
+    missing_tag_list = []
+    for suggestion in suggestion_list:
+        for tag in suggestion.tags:
+            if tag not in tag_names:
+                missing_tag_list.append((tag, suggestion))
+    missing_suggestion_list = []
+    for tag in tag_list:
+        for suggestion in tag.suggestions:
+            if suggestion not in suggestion_names:
+                missing_suggestion_list.append((suggestion, tag))
+    return render_to_response(request, 'dashboard/consistency.html', locals())
