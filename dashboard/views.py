@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 
 from django import forms
@@ -24,6 +25,15 @@ class SuggestionForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'text span-10'}))
     tags = forms.CharField(max_length=120, label="Tags",
         widget=forms.TextInput(attrs={'class': 'text span-10'}))
+
+
+class ActionForm(forms.Form):
+    """
+    Actions to fix inconsistent tag references.
+    """
+    create_missing_tags = forms.CharField(required=False)
+    delete_dangling_references = forms.CharField(required=False)
+    adjust_tag_counts = forms.CharField(required=False)
 
 
 @staff_only
@@ -77,22 +87,49 @@ def submit_suggestion(request, suggestion_form):
 
 
 def consistency(request):
-    suggestion_list = Suggestion.all().fetch(1000)
+    suggestion_list = Suggestion.all().fetch(1000) # TODO: fetch unlimited
     suggestion_names = [s.key().name() for s in suggestion_list]
-    tag_list = Tag.all().fetch(1000)
+    tag_list = Tag.all().fetch(1000) # TODO: fetch unlimited
     tag_names = [tag.key().name() for tag in tag_list]
     missing_tag_list = []
     for suggestion in suggestion_list:
         for tag in suggestion.tags:
             if tag not in tag_names:
                 missing_tag_list.append((tag, suggestion))
+    missing_tag_list.sort()
     missing_suggestion_list = []
     for tag in tag_list:
         for suggestion in tag.suggestions:
             if suggestion not in suggestion_names:
                 missing_suggestion_list.append((suggestion, tag))
+    missing_suggestion_list.sort()
     incorrect_count_list = []
     for tag in tag_list:
         if tag.count != len(tag.suggestions):
             incorrect_count_list.append(tag)
+    incorrect_count_list.sort(key=lambda tag: unicode(tag))
+    action_form = ActionForm(request.POST or None)
+    if action_form.is_valid():
+        if action_form.cleaned_data.get('create_missing_tags', False):
+            return create_missing_tags(request, missing_tag_list)
     return render_to_response(request, 'dashboard/consistency.html', locals())
+
+
+def create_missing_tags(request, missing_tag_list):
+    logging.debug('create_missing_tags')
+    while missing_tag_list:
+        key_name, suggestion = missing_tag_list.pop(0)
+        created = suggestion.created
+        suggestion_names = [suggestion.key().name()]
+        while missing_tag_list and missing_tag_list[0][0] == key_name:
+            key_name, suggestion = missing_tag_list.pop(0)
+            suggestion_names.append(suggestion.key().name())
+            if suggestion.created < created:
+                created = suggestion.created
+        tag = Tag(key_name=key_name,
+                  count=len(suggestion_names),
+                  suggestions=suggestion_names,
+                  created=created)
+        logging.debug(repr(tag))
+        tag.put()
+    return HttpResponseRedirect(request.path)

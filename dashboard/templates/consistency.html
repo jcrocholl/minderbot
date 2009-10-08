@@ -13,6 +13,9 @@
 <a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>.</li>
 {% endfor %}
 </ul>
+<form action="" method="post">
+<p><input type="submit" name="create_missing_tags" value="Create missing tags" /></p>
+</form>
 {% endif %}
 
 {% if missing_suggestion_list %}
@@ -23,6 +26,9 @@
 <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>.</li>
 {% endfor %}
 </ul>
+<form action="" method="post">
+<p><input type="submit" name="delete_dangling_references" value="Delete dangling references" /></p>
+</form>
 {% endif %}
 
 {% if incorrect_count_list %}
@@ -32,5 +38,8 @@
 <li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a> has {{ tag.suggestions|length }} suggestions, but count is {{ tag.count }}.</li>
 {% endfor %}
 </ul>
+<form action="" method="post">
+<p><input type="submit" name="adjust_tag_counts" value="Adjust incorrect counts" /></p>
+</form>
 {% endif %}
 {% endblock %}
