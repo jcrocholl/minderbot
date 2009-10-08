@@ -91,4 +91,8 @@ def consistency(request):
         for suggestion in tag.suggestions:
             if suggestion not in suggestion_names:
                 missing_suggestion_list.append((suggestion, tag))
+    incorrect_count_list = []
+    for tag in tag_list:
+        if tag.count != len(tag.suggestions):
+            incorrect_count_list.append(tag)
     return render_to_response(request, 'dashboard/consistency.html', locals())
