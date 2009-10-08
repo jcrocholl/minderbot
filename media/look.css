@@ -17,6 +17,7 @@ p,th,td,li {
 .small {
   font-size: 12px;
   line-height: 18px;
+  margin-bottom: 0px;
 }
 
 .left { text-align: left; }
