@@ -6,6 +6,11 @@ from django.core.urlresolvers import reverse
 
 class Suggestion(db.Model):
     title = db.StringProperty(required=True)
+    days = db.IntegerProperty()
+    months = db.IntegerProperty()
+    years = db.IntegerProperty()
+    miles = db.IntegerProperty()
+    kilometers = db.IntegerProperty()
     tags = db.StringListProperty()
     author = db.ReferenceProperty(User)
     created = db.DateTimeProperty(auto_now_add=True)
