@@ -2,12 +2,13 @@
 
 import os, sys
 
+APPS = 'auth registration feedback suggestions tags'.split()
 
-DUMP_COMMAND = './manage.py dumpdata --format=json --indent=2 --remote %(app)s > fixtures/%(app)s.json'
-
-APPS = 'auth registration feedback suggestions'.split()
-if len(sys.argv) > 1:
-    APPS = sys.argv[1:]
+DUMP_COMMAND = ' '.join("""
+./manage.py dumpdata
+--format=json --indent=2 --remote %(app)s
+> fixtures/%(app)s.json
+""".split())
 
 
 def system(command):
@@ -18,5 +19,13 @@ def system(command):
         sys.exit(status)
 
 
-for app in APPS:
-    system(DUMP_COMMAND % locals())
+def main(argv):
+    apps = APPS
+    if len(argv) > 1:
+        apps = argv[1:]
+    for app in apps:
+        system(DUMP_COMMAND % locals())
+
+
+if __name__ == '__main__':
+    main(sys.argv)
