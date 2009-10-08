@@ -78,7 +78,7 @@ It is visible for staff members only.</p>
 </div>
 
 {% if missing_tag_list %}
-<div class="span-8">
+<div class="span-17 last">
 <h2>Missing tags</h2>
 <ul>
 {% for tag, suggestion in missing_tag_list %}
@@ -93,7 +93,7 @@ references {{ tag }}.</li>
 {% endif %}
 
 {% if missing_suggestion_list %}
-<div class="span-8">
+<div class="span-17 last">
 <h2>Missing suggestions</h2>
 <ul>
 {% for suggestion, tag in missing_suggestion_list %}
