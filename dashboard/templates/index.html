@@ -66,8 +66,6 @@ It is visible for staff members only.</p>
 </ul>
 </div>
 
-<hr />
-
 <div class="span-17 last" id="suggestion_form">
 <form method="post" action="">
 <table>
@@ -77,46 +75,81 @@ It is visible for staff members only.</p>
 </form>
 </div>
 
-{% if missing_tag_list %}
+{% if missing_tags %}
 <div class="span-17 last">
 <h2>Missing tags</h2>
 <ul>
-{% for tag, suggestion in missing_tag_list %}
+{% for tag, suggestion in missing_tags %}
 <li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>
 references {{ tag }}.</li>
 {% endfor %}
 </ul>
 <form action="" method="post">
-<p><input type="submit" name="create_missing_tags" value="Create missing tags" /></p>
+<p><input type="submit" name="create_tags" value="Create missing tags" /></p>
 </form>
 </div>
 {% endif %}
 
-{% if missing_suggestion_list %}
+{% if missing_tag_suggestions %}
+<div class="span-17 last">
+<h2>Missing tag suggestions</h2>
+<ul>
+{% for tag, suggestion in missing_tag_suggestions %}
+<li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a> references
+<a href={{ tag.get_absolute_url }}>{{ tag }}</a> but not vice versa.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="create_tag_suggestions"
+value="Create missing references" /></p>
+</form>
+</div>
+{% endif %}
+
+{% if missing_suggestions %}
 <div class="span-17 last">
 <h2>Missing suggestions</h2>
 <ul>
-{% for suggestion, tag in missing_suggestion_list %}
+{% for suggestion, tag in missing_suggestions %}
 <li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
 references {{ suggestion }}.</li>
 {% endfor %}
 </ul>
 <form action="" method="post">
-<p><input type="submit" name="delete_dangling_references" value="Delete dangling references" /></p>
+<p><input type="submit" name="delete_tag_suggestions"
+value="Delete dangling references" /></p>
 </form>
 </div>
 {% endif %}
 
-{% if incorrect_count_list %}
+{% if missing_suggestion_tags %}
+<div class="span-17 last">
+<h2>Missing suggestion tags</h2>
+<ul>
+{% for suggestion, tag in missing_suggestion_tags %}
+<li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a> references
+<a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>
+but not vice versa.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="create_suggestion_tags"
+value="Create missing references" /></p>
+</form>
+</div>
+{% endif %}
+
+{% if incorrect_tag_counts %}
 <div class="span-17 last">
 <h2>Incorrect usage count</h2>
 <ul>
-{% for tag in incorrect_count_list %}
+{% for tag in incorrect_tag_counts %}
 <li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a> has {{ tag.suggestions|length }} suggestions, but count is {{ tag.count }}.</li>
 {% endfor %}
 </ul>
 <form action="" method="post">
-<p><input type="submit" name="adjust_tag_counts" value="Adjust incorrect counts" /></p>
+<p><input type="submit" name="adjust_tag_counts"
+value="Adjust incorrect counts" /></p>
 </form>
 </div>
 {% endif %}
