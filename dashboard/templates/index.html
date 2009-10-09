@@ -27,8 +27,8 @@ It is visible for staff members only.</p>
 <div class="span-6">
 <h2>Latest suggestions</h2>
 <div class="small gray">
-{{ suggestion_count_24h }} in 24 hours,
-{{ suggestion_count_7days }} in 7 days,
+{% if suggestion_count_24h %}{{ suggestion_count_24h }} in 24 hours,{% endif %}
+{% if suggestion_count_7d %}{{ suggestion_count_7d }} in 7 days,{% endif %}
 {{ suggestion_count }} total
 </div>
 <ul>
@@ -42,8 +42,8 @@ It is visible for staff members only.</p>
 <div class="span-6">
 <h2>Newest tags</h2>
 <div class="small gray">
-{{ tag_count_24h }} in 24 hours,
-{{ tag_count_7days }} in 7 days,
+{% if tag_count_24h %}{{ tag_count_24h }} in 24 hours,{% endif %}
+{% if tag_count_7d %}{{ tag_count_7d }} in 7 days,{% endif %}
 {{ tag_count }} total
 </div>
 <p>
@@ -57,8 +57,8 @@ It is visible for staff members only.</p>
 <div class="span-5 last">
 <h2>Newest users</h2>
 <div class="small gray">
-{{ user_count_24h }} in 24 hours,
-{{ user_count_7days }} in 7 days,
+{% if user_count_24h %}{{ user_count_24h }} in 24 hours,{% endif %}
+{% if user_count_7d %}{{ user_count_7d }} in 7 days,{% endif %}
 {{ user_count }} total
 </div>
 <ul>

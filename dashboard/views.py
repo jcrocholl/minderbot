@@ -135,25 +135,25 @@ def index(request):
     week = datetime.now() - timedelta(days=7)
     suggestion_count = Suggestion.all().count()
     suggestion_count_24h = Suggestion.all().filter('created >', day).count()
-    suggestion_count_7days = Suggestion.all().filter('created >', week).count()
+    suggestion_count_7d = Suggestion.all().filter('created >', week).count()
     suggestion_list = Suggestion.all().order('-created').fetch(RECENT_LIMIT)
 
     # Show newest tags.
     tag_count = Tag.all().count()
     tag_count_24h = Tag.all().filter('created >', day).count()
-    tag_count_7days = Tag.all().filter('created >', week).count()
+    tag_count_7d = Tag.all().filter('created >', week).count()
     tag_list = Tag.all().order('-created').fetch(RECENT_LIMIT * 4)
 
     # Registered user accounts.
     user_count = User.all().count()
     user_count_24h = User.all().filter('date_joined >', day).count()
-    user_count_7days = User.all().filter('date_joined >', week).count()
+    user_count_7d = User.all().filter('date_joined >', week).count()
     user_list = User.all().order('-date_joined').fetch(RECENT_LIMIT)
 
     # Show newest feedback.
     # feedback_count = Feedback.all().count()
     # feedback_count_24h = Feedback.all().filter('submitted >', day).count()
-    # feedback_count_7days = Feedback.all().filter('submitted >', week).count()
+    # feedback_count_7d = Feedback.all().filter('submitted >', week).count()
     # feedback_list = Feedback.all().order('-submitted').fetch(RECENT_LIMIT)
     return render_to_response(request, 'dashboard/index.html', locals())
 
