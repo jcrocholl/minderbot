@@ -24,14 +24,18 @@ class Suggestion(db.Model):
 
     def interval(self):
         parts = []
-        if self.days:
-            parts.append('%d days' % self.days)
-        if self.months:
-            parts.append('%d months' % self.months)
-        if self.years:
-            parts.append('%d years' % self.years)
-        if self.miles:
-            parts.append('%d miles' % self.miles)
-        if self.kilometers:
-            parts.append('%d km' % self.kilometers)
+        # Singular.
+        if self.days == 1: parts.append('day')
+        if self.months == 1: parts.append('month')
+        if self.years == 1: parts.append('year')
+        if self.miles == 1: parts.append('mile')
+        if self.kilometers == 1:
+            parts.append('kilometer')
+        # Plural.
+        if self.days > 1: parts.append('%d days' % self.days)
+        if self.months > 1: parts.append('%d months' % self.months)
+        if self.years > 1: parts.append('%d years' % self.years)
+        if self.miles > 1: parts.append('%d miles' % self.miles)
+        if self.kilometers > 1:
+            parts.append('%d kilometers' % self.kilometers)
         return ' or '.join(parts)
