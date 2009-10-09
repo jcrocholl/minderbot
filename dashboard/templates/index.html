@@ -161,7 +161,7 @@ value="Adjust incorrect counts" /></p>
 <div class="span-17 last">
 <h2>Incorrect tag timestamp</h2>
 <ul>
-{% for tag in incorrect_tag_created %}
+{% for tag, suggestion in incorrect_tag_created %}
 <li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
 is missing a timestamp.</li>
 {% endfor %}
