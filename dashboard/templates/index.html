@@ -152,7 +152,7 @@ but count is {{ tag.count }}.</li>
 </ul>
 <form action="" method="post">
 <p><input type="submit" name="adjust_tag_count"
-value="Adjust incorrect counts" /></p>
+value="Adjust counts" /></p>
 </form>
 </div>
 {% endif %}
@@ -162,13 +162,14 @@ value="Adjust incorrect counts" /></p>
 <h2>Incorrect tag timestamp</h2>
 <ul>
 {% for tag, suggestion in incorrect_tag_created %}
-<li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
-is missing a timestamp.</li>
+<li>Timestamp for <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+is missing or younger than
+<a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>.</li>
 {% endfor %}
 </ul>
 <form action="" method="post">
 <p><input type="submit" name="adjust_tag_created"
-value="Adjust incorrect timestamps" /></p>
+value="Adjust timestamps" /></p>
 </form>
 </div>
 {% endif %}

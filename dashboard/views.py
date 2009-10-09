@@ -90,7 +90,8 @@ def index(request):
                 missing_suggestion_tags.append((suggestion, tag))
             if oldest is None or suggestion.created < oldest.created:
                 oldest = suggestion
-        if tag.created is None:
+        if tag.created is None or (
+            oldest and tag.created > oldest.created):
             incorrect_tag_created.append((tag, oldest))
     missing_suggestions.sort()
     missing_suggestion_tags.sort(key=lambda pair: pair[0].key().name())
@@ -142,21 +143,22 @@ def index(request):
 
 
 def submit_suggestion(request, suggestion_form):
+    suggestion_slug = suggestion_form.cleaned_data['slug']
     tag_list = suggestion_form.cleaned_data['tags'].split()
-    suggestion = Suggestion(
-        author=request.user,
-        key_name=suggestion_form.cleaned_data['slug'],
-        title=suggestion_form.cleaned_data['title'],
-        tags=tag_list,
-        submitter=request.user)
-    suggestion.put()
     for tag_name in tag_list:
         tag = Tag.get_by_key_name(tag_name)
         if tag is None:
             tag = Tag(key_name=tag_name, count=0)
-        tag.suggestions.append(suggestion.key().name())
+        tag.suggestions.append(suggestion_slug)
         tag.count += 1
         tag.put()
+    suggestion = Suggestion(
+        author=request.user,
+        key_name=suggestion_slug,
+        title=suggestion_form.cleaned_data['title'],
+        tags=tag_list,
+        submitter=request.user)
+    suggestion.put()
     return HttpResponseRedirect(suggestion.get_absolute_url())
 
 
