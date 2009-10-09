@@ -5,10 +5,10 @@
 {% block content %}
 <h1>Suggestions</h1>
 
+<ul>
 {% for suggestion in suggestion_list %}
-<p><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>
-{% if suggestion.interval %}every {{ suggestion.interval }}{% endif %}<br />
-{% for tag in suggestion.tags %} {{ tag }}{% endfor %}
-</p>
+<li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>
+{% if suggestion.interval %}every {{ suggestion.interval }}{% endif %}</li>
 {% endfor %}
+</ul>
 {% endblock %}
