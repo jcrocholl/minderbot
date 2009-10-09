@@ -7,7 +7,8 @@
 
 <ul>
 {% for suggestion in suggestion_list %}
-<li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a></li>
+<li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>
+every {{ suggestion.interval }}</li>
 {% endfor %}
 </ul>
 
