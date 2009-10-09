@@ -5,6 +5,8 @@
 {% block content %}
 <h1>{{ suggestion.title }}</h1>
 
+{% if suggestion.interval %}<p>Every {{ suggestion.interval }}</p>{% endif %}
+
 <p>Tags:{% for tag in suggestion.tags %}
 <a href="/tags/{{ tag }}/">{{ tag }}</a>
 {% endfor %}</p>

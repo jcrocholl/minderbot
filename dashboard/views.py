@@ -19,12 +19,22 @@ class SuggestionForm(forms.Form):
     """
     URL input form.
     """
-    title = forms.CharField(max_length=120, label="Title",
-        widget=forms.TextInput(attrs={'class': 'text span-10'}))
-    slug = forms.CharField(max_length=120, label="Slug",
-        widget=forms.TextInput(attrs={'class': 'text span-10'}))
-    tags = forms.CharField(max_length=120, label="Tags",
-        widget=forms.TextInput(attrs={'class': 'text span-10'}))
+    title = forms.CharField(max_length=120,
+        widget=forms.TextInput(attrs={'class': 'text span-12'}))
+    slug = forms.CharField(max_length=120,
+        widget=forms.TextInput(attrs={'class': 'text span-12'}))
+    tags = forms.CharField(max_length=120,
+        widget=forms.TextInput(attrs={'class': 'text span-12'}))
+    days = forms.IntegerField(required=False,
+        widget=forms.TextInput(attrs={'class': 'text span-1'}))
+    months = forms.IntegerField(required=False,
+        widget=forms.TextInput(attrs={'class': 'text span-1'}))
+    years = forms.IntegerField(required=False,
+        widget=forms.TextInput(attrs={'class': 'text span-1'}))
+    miles = forms.IntegerField(required=False,
+        widget=forms.TextInput(attrs={'class': 'text span-1'}))
+    kilometers = forms.IntegerField(required=False,
+        widget=forms.TextInput(attrs={'class': 'text span-1'}))
 
 
 class ActionForm(forms.Form):
@@ -162,8 +172,14 @@ def submit_suggestion(request, suggestion_form):
         author=request.user,
         key_name=suggestion_slug,
         title=suggestion_form.cleaned_data['title'],
+        days=suggestion_form.cleaned_data['days'],
+        months=suggestion_form.cleaned_data['months'],
+        years=suggestion_form.cleaned_data['years'],
+        miles=suggestion_form.cleaned_data['miles'],
+        kilometers=suggestion_form.cleaned_data['kilometers'],
         tags=tag_list,
         submitter=request.user)
+    logging.debug(suggestion)
     suggestion.put()
     return HttpResponseRedirect(suggestion.get_absolute_url())
 

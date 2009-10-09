@@ -6,7 +6,8 @@
 <h1>Suggestions</h1>
 
 {% for suggestion in suggestion_list %}
-<p><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a><br />
+<p><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>
+{% if suggestion.interval %}every {{ suggestion.interval }}{% endif %}<br />
 {% for tag in suggestion.tags %} {{ tag }}{% endfor %}
 </p>
 {% endfor %}

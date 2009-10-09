@@ -73,7 +73,16 @@ It is visible for staff members only.</p>
 <div class="span-17 last" id="suggestion_form">
 <form method="post" action="">
 <table>
-{{ suggestion_form }}
+<tr><th>Title:</th><td>{{ suggestion_form.title }}</td></tr>
+<tr><th>Slug:</th><td>{{ suggestion_form.slug }}</td></tr>
+<tr><th>Tags:</th><td>{{ suggestion_form.tags }}</td></tr>
+<tr><th>Every:</th><td>
+{{ suggestion_form.days }} days or
+{{ suggestion_form.months }} months or
+{{ suggestion_form.years }} years or
+{{ suggestion_form.miles }} miles or
+{{ suggestion_form.kilometers }} km
+</td></tr>
 <tr><th></th><td><input type="submit" value="Add suggestion"/></td></tr>
 </table>
 </form>
