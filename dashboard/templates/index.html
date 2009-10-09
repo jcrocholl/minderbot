@@ -123,6 +123,22 @@ value="Delete dangling references" /></p>
 </div>
 {% endif %}
 
+{% if empty_tags %}
+<div class="span-17 last">
+<h2>Obsolete tags</h2>
+<ul>
+{% for tag in empty_tags %}
+<li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+references no suggestions.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="delete_empty_tags"
+value="Delete obsolete tags" /></p>
+</form>
+</div>
+{% endif %}
+
 {% if missing_suggestion_tags %}
 <div class="span-17 last">
 <h2>Missing suggestion tags</h2>

@@ -33,6 +33,7 @@ class ActionForm(forms.Form):
     """
     create_tags = forms.CharField(required=False)
     delete_tag_suggestions = forms.CharField(required=False)
+    delete_empty_tags = forms.CharField(required=False)
     create_tag_suggestions = forms.CharField(required=False)
     create_suggestion_tags = forms.CharField(required=False)
     adjust_tag_count = forms.CharField(required=False)
@@ -58,7 +59,7 @@ def index(request):
     for tag in tag_list:
         tag_dict[tag.key().name()] = tag
 
-    # Missing tags or references to suggestions.
+    # Check for missing tags or missing references to suggestions.
     missing_tags = []
     missing_tag_suggestions = []
     for suggestion in suggestion_list:
@@ -72,14 +73,17 @@ def index(request):
     missing_tags.sort()
     missing_tag_suggestions.sort(key=lambda pair: pair[0].key().name())
 
-    # Missing suggestions or references to tags.
+    # Check for missing suggestions or missing references to tags.
     incorrect_tag_count = []
     incorrect_tag_created = []
     missing_suggestions = []
     missing_suggestion_tags = []
+    empty_tags = []
     for tag in tag_list:
         if tag.count != len(tag.suggestions):
             incorrect_tag_count.append(tag)
+        elif tag.count == 0:
+            empty_tags.append(tag)
         oldest = None
         for suggestion in tag.suggestions:
             if suggestion not in suggestion_dict:
@@ -105,6 +109,8 @@ def index(request):
             return create_tags(request, missing_tags)
         if action_form.cleaned_data['delete_tag_suggestions']:
             return delete_tag_suggestions(request, missing_suggestions)
+        if action_form.cleaned_data['delete_empty_tags']:
+            return delete_empty_tags(request, empty_tags)
         if action_form.cleaned_data['create_tag_suggestions']:
             return create_tag_suggestions(request, missing_tag_suggestions)
         if action_form.cleaned_data['create_suggestion_tags']:
@@ -185,6 +191,12 @@ def delete_tag_suggestions(request, missing_suggestions):
     for suggestion_name, tag in missing_suggestions:
         tag.suggestions.remove(suggestion_name)
         tag.count = len(tag.suggestions)
+        save_tag(tag)
+    return HttpResponseRedirect(request.path)
+
+
+def delete_empty_tags(request, empty_tags):
+    for tag in empty_tags:
         save_tag(tag)
     return HttpResponseRedirect(request.path)
 
