@@ -85,7 +85,8 @@ references {{ tag }}.</li>
 {% endfor %}
 </ul>
 <form action="" method="post">
-<p><input type="submit" name="create_tags" value="Create missing tags" /></p>
+<p><input type="submit" name="create_tags"
+value="Create missing tags" /></p>
 </form>
 </div>
 {% endif %}
@@ -139,17 +140,35 @@ value="Create missing references" /></p>
 </div>
 {% endif %}
 
-{% if incorrect_tag_counts %}
+{% if incorrect_tag_count %}
 <div class="span-17 last">
 <h2>Incorrect usage count</h2>
 <ul>
-{% for tag in incorrect_tag_counts %}
-<li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a> has {{ tag.suggestions|length }} suggestions, but count is {{ tag.count }}.</li>
+{% for tag in incorrect_tag_count %}
+<li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+has {{ tag.suggestions|length }} suggestions,
+but count is {{ tag.count }}.</li>
 {% endfor %}
 </ul>
 <form action="" method="post">
-<p><input type="submit" name="adjust_tag_counts"
+<p><input type="submit" name="adjust_tag_count"
 value="Adjust incorrect counts" /></p>
+</form>
+</div>
+{% endif %}
+
+{% if incorrect_tag_created %}
+<div class="span-17 last">
+<h2>Incorrect tag timestamp</h2>
+<ul>
+{% for tag in incorrect_tag_created %}
+<li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+is missing a timestamp.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="adjust_tag_created"
+value="Adjust incorrect timestamps" /></p>
 </form>
 </div>
 {% endif %}

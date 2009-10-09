@@ -35,7 +35,8 @@ class ActionForm(forms.Form):
     delete_tag_suggestions = forms.CharField(required=False)
     create_tag_suggestions = forms.CharField(required=False)
     create_suggestion_tags = forms.CharField(required=False)
-    adjust_tag_counts = forms.CharField(required=False)
+    adjust_tag_count = forms.CharField(required=False)
+    adjust_tag_created = forms.CharField(required=False)
 
 
 @staff_only
@@ -72,12 +73,14 @@ def index(request):
     missing_tag_suggestions.sort(key=lambda pair: pair[0].key().name())
 
     # Missing suggestions or references to tags.
-    incorrect_tag_counts = []
+    incorrect_tag_count = []
+    incorrect_tag_created = []
     missing_suggestions = []
     missing_suggestion_tags = []
     for tag in tag_list:
         if tag.count != len(tag.suggestions):
-            incorrect_tag_counts.append(tag)
+            incorrect_tag_count.append(tag, suggestion_dict)
+        oldest = None
         for suggestion in tag.suggestions:
             if suggestion not in suggestion_dict:
                 missing_suggestions.append((suggestion, tag))
@@ -85,9 +88,14 @@ def index(request):
             suggestion = suggestion_dict[suggestion]
             if tag.key().name() not in suggestion.tags:
                 missing_suggestion_tags.append((suggestion, tag))
+            if oldest is None or suggestion.created < oldest.created:
+                oldest = suggestion
+        if tag.created is None:
+            incorrect_tag_created.append((tag, oldest))
     missing_suggestions.sort()
     missing_suggestion_tags.sort(key=lambda pair: pair[0].key().name())
-    incorrect_tag_counts.sort(key=lambda tag: unicode(tag))
+    incorrect_tag_count.sort(key=lambda tag: tag.key().name())
+    incorrect_tag_created.sort(key=lambda pair: pair[0].key().name())
 
     # Fix inconsistencies if admin clicked one of the buttons.
     action_form = ActionForm(request.POST or None)
@@ -96,12 +104,14 @@ def index(request):
             return create_tags(request, missing_tags)
         if action_form.cleaned_data['delete_tag_suggestions']:
             return delete_tag_suggestions(request, missing_suggestions)
-        if action_form.cleaned_data['adjust_tag_counts']:
-            return adjust_tag_counts(request, incorrect_tag_counts)
         if action_form.cleaned_data['create_tag_suggestions']:
             return create_tag_suggestions(request, missing_tag_suggestions)
         if action_form.cleaned_data['create_suggestion_tags']:
             return create_suggestion_tags(request, missing_suggestion_tags)
+        if action_form.cleaned_data['adjust_tag_count']:
+            return adjust_tag_count(request, incorrect_tag_count)
+        if action_form.cleaned_data['adjust_tag_created']:
+            return adjust_tag_created(request, incorrect_tag_created)
 
     # Show newest suggestions.
     day = datetime.now() - timedelta(hours=24)
@@ -193,9 +203,16 @@ def create_suggestion_tags(request, missing_suggestion_tags):
     return HttpResponseRedirect(request.path)
 
 
-def adjust_tag_counts(request, incorrect_tag_counts):
-    for tag in incorrect_tag_counts:
+def adjust_tag_count(request, incorrect_tag_count):
+    for tag in incorrect_tag_count:
         tag.count = len(tag.suggestions)
+        save_tag(tag)
+    return HttpResponseRedirect(request.path)
+
+
+def adjust_tag_created(request, incorrect_tag_created):
+    for tag, suggestion in incorrect_tag_created:
+        tag.created = suggestion.created
         save_tag(tag)
     return HttpResponseRedirect(request.path)
 
