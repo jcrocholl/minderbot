@@ -79,7 +79,7 @@ def index(request):
     missing_suggestion_tags = []
     for tag in tag_list:
         if tag.count != len(tag.suggestions):
-            incorrect_tag_count.append(tag, suggestion_dict)
+            incorrect_tag_count.append(tag)
         oldest = None
         for suggestion in tag.suggestions:
             if suggestion not in suggestion_dict:
