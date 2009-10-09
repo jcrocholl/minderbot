@@ -5,15 +5,11 @@
 {% block content %}
 <h1>Welcome to the Minderbot</h1>
 
-<form method="post" action="">
-<p>
-{{ url_form.url.label }}<br />
-{{ url_form.url }}
-<input type="submit" value="Transcribe!"/>
-{% if url_form.errors.url %}
-<span class="admonition error">{{ url_form.errors.url.0 }}</span>
-{% endif %}
-</p>
-</form>
+<p>Do you want a reminder to replace your
+<a href="{% url suggestion_detail object_id='smoke-alarm-batteries' %}">smoke
+alarm batteries</a>?</p>
+
+<p>Do you have a <a href="{% url tags.views.detail key_name='car' %}">car</a>
+that needs regular maintenance?</p>
 
 {% endblock %}
