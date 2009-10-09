@@ -8,6 +8,10 @@ $(document).ready(function() {
     $('div#suggestion_form').slideToggle(500);
     return false;
   });
+  $('input#id_title').keyup( function() {
+    $('input#id_slug').val($('input#id_title').val().toLowerCase().replace(/\s+/g, '-'));
+    $('input#id_tags').val($('input#id_title').val().toLowerCase());
+  });
 });
 </script>
 {% endblock %}
