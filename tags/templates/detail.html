@@ -10,4 +10,7 @@
 <li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a></li>
 {% endfor %}
 </ul>
+
+<p class="gray small">This tag was created
+{{ tag.created|timesince }} ago.</p>
 {% endblock %}

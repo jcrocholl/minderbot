@@ -26,11 +26,11 @@ It is visible for staff members only.</p>
 
 <div class="span-6">
 <h2>Latest suggestions</h2>
-<p class="small gray">
+<div class="small gray">
 {{ suggestion_count_24h }} in 24 hours,
 {{ suggestion_count_7days }} in 7 days,
 {{ suggestion_count }} total
-</p>
+</div>
 <ul>
 {% for suggestion in suggestion_list %}
 <li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a></li>
@@ -41,11 +41,11 @@ It is visible for staff members only.</p>
 
 <div class="span-6">
 <h2>Newest tags</h2>
-<p class="small gray">
+<div class="small gray">
 {{ tag_count_24h }} in 24 hours,
 {{ tag_count_7days }} in 7 days,
 {{ tag_count }} total
-</p>
+</div>
 <p>
 {% for tag in tag_list %}
 <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
@@ -56,12 +56,11 @@ It is visible for staff members only.</p>
 
 <div class="span-5 last">
 <h2>Newest users</h2>
-<p class="small gray">
+<div class="small gray">
 {{ user_count_24h }} in 24 hours,
 {{ user_count_7days }} in 7 days,
 {{ user_count }} total
-</span>
-</p>
+</div>
 <ul>
 {% for user in user_list %}
 <li>{{ user.username }}

@@ -6,10 +6,6 @@ h2 {
   margin-bottom: 0;
 }
 
-ul {
-  margin-bottom: 8px;
-}
-
 p,th,td,li {
   font-size: 14px;
   line-height: 18px;
@@ -17,7 +13,9 @@ p,th,td,li {
 .small {
   font-size: 12px;
   line-height: 18px;
-  margin-bottom: 0px;
+}
+div.small {
+  margin: 0;
 }
 
 .left { text-align: left; }

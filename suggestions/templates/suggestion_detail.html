@@ -5,9 +5,13 @@
 {% block content %}
 <h1>{{ suggestion.title }}</h1>
 
-{% if suggestion.interval %}<p>Every {{ suggestion.interval }}</p>{% endif %}
+<p>Every {{ suggestion.interval }}</p>
 
-<p>Tags:{% for tag in suggestion.tags %}
+<p>{% for tag in suggestion.tags %}
 <a href="/tags/{{ tag }}/">{{ tag }}</a>
 {% endfor %}</p>
+
+<p class="gray small">This suggestion was created
+{{ suggestion.created|timesince }} ago
+by {{ suggestion.author }}.</p>
 {% endblock %}
