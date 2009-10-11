@@ -1,5 +1,5 @@
 cron:
 - description: consistency check
   url: /consistency/
-  schedule: every 10 minutes
+  schedule: every 60 minutes
   timezone: America/Los_Angeles
