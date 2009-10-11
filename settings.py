@@ -26,10 +26,11 @@ COMBINE_MEDIA = {
 
 # Change your email settings
 ADMINS = (
-    ('Johann C. Rocholl', 'jcrocholl@gmail.com'),
+    ('Johann C. Rocholl', 'jcrocholl@googlemail.com'),
     )
 DEFAULT_FROM_EMAIL = ADMINS[0][1]
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
+EMAIL_SUBJECT_PREFIX = '[Minderbot] '
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '%7317$0d_3qpj7s_h3_ts_p+u&p&&#puc(&2p&lm=!$(uai@3f'
