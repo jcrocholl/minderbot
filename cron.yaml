@@ -1,0 +1,4 @@
+cron:
+- description: consistency check
+  url: /consistency/
+  schedule: every 60 minutes
