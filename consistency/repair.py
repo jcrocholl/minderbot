@@ -2,18 +2,22 @@ import logging
 
 from django.http import HttpResponseRedirect
 
+from suggestions.models import Suggestion
+from tags.models import Tag
 
-def create_tags(request, missing_tags):
-    while missing_tags:
-        text, key_name, suggestion = missing_tags.pop(0)
+
+def tag_missing(request, problems):
+    problems.sort(key=lambda triple: triple[1])
+    while problems:
+        text, tag_name, suggestion = problems.pop(0)
         created = suggestion.created
         suggestion_names = [suggestion.key().name()]
-        while missing_tags and missing_tags[0][0] == key_name:
-            text, key_name, suggestion = missing_tags.pop(0)
+        while problems and problems[0][1] == tag_name:
+            text, tag_name, suggestion = problems.pop(0)
             suggestion_names.append(suggestion.key().name())
             if suggestion.created < created:
                 created = suggestion.created
-        tag = Tag(key_name=key_name,
+        tag = Tag(key_name=tag_name,
                   count=len(suggestion_names),
                   suggestions=suggestion_names,
                   created=created)
@@ -52,8 +56,8 @@ def suggestion_tag(request, problems):
     return HttpResponseRedirect(request.path)
 
 
-def claim_authorship(request, missing_suggestion_authors):
-    for text, suggestion in missing_suggestion_authors:
+def suggestion_author(request, problems):
+    for text, suggestion in problems:
         suggestion.author = request.user
         logging.debug('updating %s', repr(suggestion))
         suggestion.put()
