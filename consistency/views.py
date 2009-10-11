@@ -8,7 +8,6 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 
 from ragendja.template import render_to_response
-from ragendja.auth.decorators import staff_only
 
 from suggestions.models import Suggestion
 from tags.models import Tag
@@ -29,11 +28,14 @@ class ActionForm(forms.Form):
     adjust_tag_created = forms.CharField(required=False)
 
 
-@staff_only
 def index(request):
     """
     Check suggestions and tags for consistency.
     """
+    if (request.META.get('X-APPENGINE-CRON', '') != 'true'
+        and not request.user.is_staff):
+        return HttpResponseRedirect('/accounts/login/?next=/consistency/')
+
     # Get all suggestions.
     suggestion_list = Suggestion.all().fetch(1000) # TODO: fetch unlimited
     suggestion_dict = {}
@@ -98,7 +100,7 @@ def index(request):
 
     # Fix inconsistencies if admin clicked one of the buttons.
     action_form = ActionForm(request.POST or None)
-    if action_form.is_valid():
+    if action_form.is_valid() and request.user.is_staff:
         if action_form.cleaned_data['create_tags']:
             return create_tags(request, missing_tags)
         if action_form.cleaned_data['delete_tag_suggestions']:
