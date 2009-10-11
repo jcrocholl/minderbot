@@ -5,11 +5,13 @@ from datetime import datetime, timedelta
 from google.appengine.api import datastore_errors
 
 from django import forms
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.mail import mail_admins
 from django.contrib.auth.models import User
 
 from ragendja.template import render_to_response
+from django.template.loader import get_template
+from django.template import RequestContext
 
 from suggestions.models import Suggestion
 from tags.models import Tag
@@ -34,11 +36,7 @@ def index(request):
     """
     Check suggestions and tags for consistency.
     """
-    message = pprint.pformat(request.META)
-    logging.info(message)
-    mail_admins('request.META', message, fail_silently=True)
-
-    if (request.META.get('X-APPENGINE-CRON', '') != 'true'
+    if (request.META.get('HTTP_X_APPENGINE_CRON', '') != 'true'
         and not request.user.is_staff):
         return HttpResponseRedirect('/accounts/login/?next=/consistency/')
 
@@ -125,6 +123,12 @@ def index(request):
             return adjust_tag_created(request, incorrect_tag_created)
 
     # Show results of consistency checks.
+    if request.META.get('HTTP_X_APPENGINE_CRON', '') == 'true':
+        template = get_template('consistency/messages.html')
+        message = template.render(RequestContext(request, locals()))
+        logging.info(message)
+        mail_admins('Consistency check', message, fail_silently=True)
+        return HttpResponse(message)
     return render_to_response(request, 'consistency/index.html', locals())
 
 
