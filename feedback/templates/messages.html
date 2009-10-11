@@ -13,7 +13,7 @@ name="delete" value="{{ feedback.key.id }}" class="image16x16" />
 {% endif %}<br />
 <span class="lightgray">
 {{ feedback.points }} points
-{% if feedback.submitter %}by {{ feedback.submitter.username }}{% endif %}
+{% if feedback.submitter %}by {{ feedback.submitter }}{% endif %}
 {{ feedback.submitted|timesince }} ago
 {% ifnotequal feedback.page page %}
 on <a href="{{ feedback.page }}">{{ feedback.page }}</a>

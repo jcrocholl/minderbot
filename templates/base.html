@@ -34,7 +34,7 @@ lang="{% firstof LANGUAGE_CODE 'en' %}">
 </div>
 <div id="login" class="span-10 last right">
 {% if user.is_authenticated %}
-Welcome, {{ user.email }} |
+Welcome, {{ user }} |
 {% if user.is_staff %}
 <a href="/dashboard/">Dashboard</a> |
 <a href="/admin/">Admin</a> |
