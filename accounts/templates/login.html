@@ -14,20 +14,20 @@ $(document).ready(function() {
 <h1>Login</h1>
 
 {% if login_error %}
-<div class="error">{{ login_error }}</div>
+<p class="error">{{ login_error }}</p>
 {% endif %}
 
 <form action="" method="post">
 <table>
 <tr>
-<th>{{ login_form.email.label_tag }}</th>
+<th>{{ login_form.email.label_tag }}:</th>
 <td>{{ login_form.email }}</td>
 <td>{% if login_form.email.errors %}
 <span class="error">{{ login_form.email.errors.0 }}</span>
 {% endif %}</td>
 </tr>
 <tr>
-<th>{{ login_form.password.label_tag }}</th>
+<th>{{ login_form.password.label_tag }}:</th>
 <td>{{ login_form.password }}</td>
 <td>{% if login_form.password.errors %}
 <span class="error">{{ login_form.password.errors.0 }}</span>
