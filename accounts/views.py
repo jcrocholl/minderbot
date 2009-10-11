@@ -12,7 +12,6 @@ class LoginForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'text span-6 focus'}))
     password = forms.CharField(max_length=40,
         widget=forms.PasswordInput(attrs={'class': 'text span-6'}))
-    next = forms.CharField(required=False)
 
     def clean(self):
         email = self.cleaned_data.get('email', '')
@@ -33,8 +32,9 @@ def login(request):
     if login_form.is_valid():
         user = login_form.cleaned_data['user']
         auth.login(request, user)
-        next = login_form.cleaned_data['next']
-        if not next:
+        next = request.GET.get('next', '')
+        if not next.startswith('/'):
+            # Don't allow absolute URLs for redirect target.
             next = settings.LOGIN_REDIRECT_URL
         return HttpResponseRedirect(next)
     if login_form.errors.get('__all__', False):
