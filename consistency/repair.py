@@ -64,8 +64,8 @@ def suggestion_author(request, problems):
     return HttpResponseRedirect(request.path)
 
 
-def adjust_tag_count(request, incorrect_tag_count):
-    for text, tag in incorrect_tag_count:
+def tag_count(request, problems):
+    for text, tag, count, length in problems:
         tag.count = len(tag.suggestions)
         save_tag(tag)
     return HttpResponseRedirect(request.path)

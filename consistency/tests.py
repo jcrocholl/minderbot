@@ -31,8 +31,8 @@ class CronTest(TestCase):
         response = self.client.get('/consistency/',
                                    HTTP_X_APPENGINE_CRON='true')
         self.failUnlessEqual(response.status_code, 200)
-        self.assertTrue(response.content, 'http://')
-        self.assertTrue(response.content, '/consistency/')
+        self.assertTrue('http://' in response.content)
+        self.assertTrue('/consistency/' in response.content)
 
 
 class AdminTest(TestCase):
@@ -59,7 +59,7 @@ class AdminTest(TestCase):
                         in response.content)
         self.assertTrue("Tag b is referenced by a-b but does not exist."
                         in response.content)
-        # Simulate button click to create the missing tags.
+        # Simulate button click to fix this problem.
         response = self.client.post('/consistency/',
                                     {'tag_missing': "Create missing tags"})
         self.assertRedirects(response, '/consistency/')
@@ -76,11 +76,11 @@ class AdminTest(TestCase):
         self.assertFalse('suggestion_author' in response.context['problems'])
         # Create a suggestion without an author.
         Suggestion(key_name='a-b', title='a b', tags='a b'.split()).put()
-        # Check that the author is missing.
+        # Check that the missing author is detected.
         response = self.client.get('/consistency/')
         self.assertTrue('suggestion_author' in response.context['problems'])
         self.assertTrue("Author of a-b is None." in response.content)
-        # Simulate button click to create the missing tags.
+        # Simulate button click to fix this problem.
         response = self.client.post('/consistency/',
                                     {'suggestion_author': "Claim authorship"})
         self.assertRedirects(response, '/consistency/')
@@ -88,5 +88,28 @@ class AdminTest(TestCase):
         response = self.client.get('/consistency/')
         self.assertFalse('suggestion_author' in response.context['problems'])
         self.assertTrue("All suggestions have valid authors."
+                        in response.content)
+
+    def test_tag_count(self):
+        self.assertEqual(Suggestion.all().count(), 0)
+        self.assertEqual(Tag.all().count(), 0)
+        # Check that this problem doesn't already exist.
+        response = self.client.get('/consistency/')
+        self.assertFalse('tag_count' in response.context['problems'])
+        # Create a tag with incorrect count.
+        Tag(key_name='a', suggestions='a-b a-c'.split(), count=3).put()
+        # Check that the incorrect count is detected.
+        response = self.client.get('/consistency/')
+        self.assertTrue('tag_count' in response.context['problems'])
+        self.assertTrue("Tag a has count 3 but references 2 suggestions."
+                        in response.content)
+        # Simulate button click to fix this problem.
+        response = self.client.post('/consistency/',
+                                    {'tag_count': "Adjust tag counts"})
+        self.assertRedirects(response, '/consistency/')
+        # Check that the count is now correct.
+        response = self.client.get('/consistency/')
+        self.assertFalse('tag_count' in response.context['problems'])
+        self.assertTrue("All tag count fields are correct."
                         in response.content)
 
