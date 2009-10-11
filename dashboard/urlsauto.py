@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 
 import views
 
-urlpatterns = patterns('',
-    (r'^$', views.index),
+urlpatterns = patterns('dashboard.views',
+    (r'^$', 'index'),
+    (r'^check/$', 'check'),
 )

@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Consistency check{% endblock %}
+
+{% block content %}
+<h1>Consistency check</h1>
+
+<p>This page checks the consistency of suggestions and tags.
+It is only visible for staff members.</p>
+
+{% if missing_tags %}
+<div class="span-17 last">
+<h2 class="error">Missing tags</h2>
+<ul>
+{% for tag, suggestion in missing_tags %}
+<li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>
+references {{ tag }}.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="create_tags"
+value="Create missing tags" /></p>
+</form>
+</div>
+{% else %}
+<h2 class="success">All referenced tags exist.</h2>
+{% endif %}
+
+{% if missing_tag_suggestions %}
+<div class="span-17 last">
+<h2 class="error">Missing tag suggestions</h2>
+<ul>
+{% for tag, suggestion in missing_tag_suggestions %}
+<li><a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a> references
+<a href={{ tag.get_absolute_url }}>{{ tag }}</a> but not vice versa.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="create_tag_suggestions"
+value="Create missing references" /></p>
+</form>
+</div>
+{% else %}
+<h2 class="success">All suggestion-to-tags references have a reverse.</h2>
+{% endif %}
+
+{% if missing_suggestions %}
+<div class="span-17 last">
+<h2 class="error">Missing suggestions</h2>
+<ul>
+{% for suggestion, tag in missing_suggestions %}
+<li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+references {{ suggestion }}.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="delete_tag_suggestions"
+value="Delete dangling references" /></p>
+</form>
+</div>
+{% else %}
+<h2 class="success">All referenced suggestions exist.</h2>
+{% endif %}
+
+{% if empty_tags %}
+<div class="span-17 last">
+<h2 class="error">Obsolete tags</h2>
+<ul>
+{% for tag in empty_tags %}
+<li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+references no suggestions.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="delete_empty_tags"
+value="Delete obsolete tags" /></p>
+</form>
+</div>
+{% else %}
+<h2 class="success">All tags reference at least one suggestion.</h2>
+{% endif %}
+
+{% if missing_suggestion_tags %}
+<div class="span-17 last">
+<h2 class="error">Missing suggestion tags</h2>
+<ul>
+{% for suggestion, tag in missing_suggestion_tags %}
+<li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a> references
+<a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>
+but not vice versa.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="create_suggestion_tags"
+value="Create missing references" /></p>
+</form>
+</div>
+{% else %}
+<h2 class="success">All tag-to-suggestion references have a reverse.</h2>
+{% endif %}
+
+{% if missing_suggestion_authors %}
+<div class="span-17 last">
+<h2 class="error">Missing suggestion authors</h2>
+<ul>
+{% for suggestion in missing_suggestion_authors %}
+<li>Author of <a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>
+is missing or does not exist.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="claim_authorship"
+value="Claim authorship" /></p>
+</form>
+</div>
+{% else %}
+<h2 class="success">All suggestions have a valid author.</h2>
+{% endif %}
+
+{% if incorrect_tag_count %}
+<div class="span-17 last">
+<h2 class="error">Incorrect usage count</h2>
+<ul>
+{% for tag in incorrect_tag_count %}
+<li>Tag <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+has {{ tag.suggestions|length }} suggestions,
+but count is {{ tag.count }}.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="adjust_tag_count"
+value="Adjust counts" /></p>
+</form>
+</div>
+{% else %}
+<h2 class="success">All tags have correct usage counts.</h2>
+{% endif %}
+
+{% if incorrect_tag_created %}
+<div class="span-17 last">
+<h2 class="error">Incorrect tag timestamp</h2>
+<ul>
+{% for tag, suggestion in incorrect_tag_created %}
+<li>Timestamp for <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+is missing or younger than
+<a href="{{ suggestion.get_absolute_url }}">{{ suggestion }}</a>.</li>
+{% endfor %}
+</ul>
+<form action="" method="post">
+<p><input type="submit" name="adjust_tag_created"
+value="Adjust timestamps" /></p>
+</form>
+</div>
+{% else %}
+<h2 class="success">All tags have sensible timestamps.</h2>
+{% endif %}
+
+{% endblock %}
