@@ -8,8 +8,8 @@
 <p>This page checks the consistency of suggestions and tags.
 It is only visible for staff members.</p>
 
-{% if missing_tags %}
 <div class="span-17 last">
+{% if missing_tags %}
 <h2 class="error">Missing tags</h2>
 <ul>
 {% for tag, suggestion in missing_tags %}
@@ -21,13 +21,13 @@ references {{ tag }}.</li>
 <p><input type="submit" name="create_tags"
 value="Create missing tags" /></p>
 </form>
-</div>
 {% else %}
 <h2 class="success">All referenced tags exist.</h2>
 {% endif %}
+</div>
 
-{% if missing_tag_suggestions %}
 <div class="span-17 last">
+{% if missing_tag_suggestions %}
 <h2 class="error">Missing tag suggestions</h2>
 <ul>
 {% for tag, suggestion in missing_tag_suggestions %}
@@ -39,13 +39,13 @@ value="Create missing tags" /></p>
 <p><input type="submit" name="create_tag_suggestions"
 value="Create missing references" /></p>
 </form>
-</div>
 {% else %}
-<h2 class="success">All suggestion-to-tags references have a reverse.</h2>
+<h2 class="success">All suggestion-to-tag references have a reverse.</h2>
 {% endif %}
+</div>
 
-{% if missing_suggestions %}
 <div class="span-17 last">
+{% if missing_suggestions %}
 <h2 class="error">Missing suggestions</h2>
 <ul>
 {% for suggestion, tag in missing_suggestions %}
@@ -57,13 +57,13 @@ references {{ suggestion }}.</li>
 <p><input type="submit" name="delete_tag_suggestions"
 value="Delete dangling references" /></p>
 </form>
-</div>
 {% else %}
 <h2 class="success">All referenced suggestions exist.</h2>
 {% endif %}
+</div>
 
-{% if empty_tags %}
 <div class="span-17 last">
+{% if empty_tags %}
 <h2 class="error">Obsolete tags</h2>
 <ul>
 {% for tag in empty_tags %}
@@ -75,13 +75,13 @@ references no suggestions.</li>
 <p><input type="submit" name="delete_empty_tags"
 value="Delete obsolete tags" /></p>
 </form>
-</div>
 {% else %}
 <h2 class="success">All tags reference at least one suggestion.</h2>
 {% endif %}
+</div>
 
-{% if missing_suggestion_tags %}
 <div class="span-17 last">
+{% if missing_suggestion_tags %}
 <h2 class="error">Missing suggestion tags</h2>
 <ul>
 {% for suggestion, tag in missing_suggestion_tags %}
@@ -94,13 +94,13 @@ but not vice versa.</li>
 <p><input type="submit" name="create_suggestion_tags"
 value="Create missing references" /></p>
 </form>
-</div>
 {% else %}
 <h2 class="success">All tag-to-suggestion references have a reverse.</h2>
 {% endif %}
+</div>
 
-{% if missing_suggestion_authors %}
 <div class="span-17 last">
+{% if missing_suggestion_authors %}
 <h2 class="error">Missing suggestion authors</h2>
 <ul>
 {% for suggestion in missing_suggestion_authors %}
@@ -112,13 +112,13 @@ is missing or does not exist.</li>
 <p><input type="submit" name="claim_authorship"
 value="Claim authorship" /></p>
 </form>
-</div>
 {% else %}
 <h2 class="success">All suggestions have a valid author.</h2>
 {% endif %}
+</div>
 
-{% if incorrect_tag_count %}
 <div class="span-17 last">
+{% if incorrect_tag_count %}
 <h2 class="error">Incorrect usage count</h2>
 <ul>
 {% for tag in incorrect_tag_count %}
@@ -131,13 +131,13 @@ but count is {{ tag.count }}.</li>
 <p><input type="submit" name="adjust_tag_count"
 value="Adjust counts" /></p>
 </form>
-</div>
 {% else %}
 <h2 class="success">All tags have correct usage counts.</h2>
 {% endif %}
+</div>
 
-{% if incorrect_tag_created %}
 <div class="span-17 last">
+{% if incorrect_tag_created %}
 <h2 class="error">Incorrect tag timestamp</h2>
 <ul>
 {% for tag, suggestion in incorrect_tag_created %}
@@ -150,9 +150,9 @@ is missing or younger than
 <p><input type="submit" name="adjust_tag_created"
 value="Adjust timestamps" /></p>
 </form>
-</div>
 {% else %}
 <h2 class="success">All tags have sensible timestamps.</h2>
 {% endif %}
+</div>
 
 {% endblock %}
