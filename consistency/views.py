@@ -34,9 +34,9 @@ def index(request):
     """
     Check suggestions and tags for consistency.
     """
-    message = pprint.pformat(request.META),
+    message = pprint.pformat(request.META)
     logging.info(message)
-    mail_admins('request.META', message, fail_silently=False)
+    mail_admins('request.META', message, fail_silently=True)
 
     if (request.META.get('X-APPENGINE-CRON', '') != 'true'
         and not request.user.is_staff):
