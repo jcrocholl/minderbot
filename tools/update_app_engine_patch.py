@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-FOLDERS = "blueprintcss common registration".split()
+FOLDERS = "blueprintcss common".split()
 
 import os, sys
 

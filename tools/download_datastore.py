@@ -2,7 +2,7 @@
 
 import os, sys
 
-APPS = 'auth registration feedback suggestions tags'.split()
+APPS = 'auth feedback suggestions tags'.split()
 
 DUMP_COMMAND = ' '.join("""
 ./manage.py dumpdata
