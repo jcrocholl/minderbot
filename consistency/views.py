@@ -5,6 +5,7 @@ from google.appengine.api import datastore_errors
 
 from django import forms
 from django.http import HttpResponseRedirect
+from django.core.mail import mail_admins
 from django.contrib.auth.models import User
 
 from ragendja.template import render_to_response
@@ -32,6 +33,8 @@ def index(request):
     """
     Check suggestions and tags for consistency.
     """
+    mail_admins('request.META', repr(request.META), fail_silently='True')
+
     if (request.META.get('X-APPENGINE-CRON', '') != 'true'
         and not request.user.is_staff):
         return HttpResponseRedirect('/accounts/login/?next=/consistency/')

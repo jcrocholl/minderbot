@@ -23,6 +23,11 @@ COMBINE_MEDIA = {
     ),
 }
 
+
+ADMINS = (
+    ('Johann C. Rocholl', 'johann@rocholl.net'),
+    )
+
 # Change your email settings
 if on_production_server:
     DEFAULT_FROM_EMAIL = 'support@minderbot.com'
