@@ -11,7 +11,7 @@ class LoginForm(forms.Form):
     email = forms.EmailField(
         widget=forms.TextInput(attrs={'class': 'text span-6 focus'}))
     password = forms.CharField(max_length=40,
-        widget=forms.TextInput(attrs={'class': 'text span-6'}))
+        widget=forms.PasswordInput(attrs={'class': 'text span-6'}))
     next = forms.CharField(required=False)
 
     def clean(self):
