@@ -45,14 +45,13 @@ class AdminTest(TestCase):
             self.client.login(username='a@b.com', password='password'))
 
     def test_tag_missing(self):
-        self.assertEqual(Suggestion.all().count(), 0)
-        self.assertEqual(Tag.all().count(), 0)
         # Check that this problem doesn't already exist.
+        self.assertEqual(Tag.all().count(), 0)
         response = self.client.get('/consistency/')
         self.assertFalse('tag_missing' in response.context['problems'])
         # Create a suggestion but not the tags.
         Suggestion(key_name='a-b', title='a b', tags='a b'.split()).put()
-        # Check that the tags are missing.
+        # Check that the missing tags are detected.
         response = self.client.get('/consistency/')
         self.assertTrue('tag_missing' in response.context['problems'])
         self.assertTrue("Tag a is referenced by a-b but does not exist."
@@ -64,13 +63,42 @@ class AdminTest(TestCase):
                                     {'tag_missing': "Create missing tags"})
         self.assertRedirects(response, '/consistency/')
         # Check that the tags are now existing.
+        self.assertEqual(Tag.all().count(), 2)
         response = self.client.get('/consistency/')
         self.assertFalse('tag_missing' in response.context['problems'])
         self.assertTrue("All referenced tags exist." in response.content)
 
-    def test_suggestion_author(self):
-        self.assertEqual(Suggestion.all().count(), 0)
+    def test_suggestion_missing(self):
+        # Check that this problem doesn't already exist.
         self.assertEqual(Tag.all().count(), 0)
+        response = self.client.get('/consistency/')
+        self.assertFalse('suggestion_missing' in response.context['problems'])
+        # Create tags but not all suggestions.
+        Suggestion(key_name='a-b', title='a b', tags='a b'.split()).put()
+        Tag(key_name='a', count=2, suggestions='a-b a-c'.split()).put()
+        Tag(key_name='b', count=2, suggestions='b-c'.split()).put()
+        self.assertEqual(Tag.all().count(), 2)
+        # Check that the missing suggestions are detected.
+        response = self.client.get('/consistency/')
+        self.assertTrue('suggestion_missing' in response.context['problems'])
+        self.assertTrue("Suggestion a-c is referenced by a but does not exist."
+                        in response.content)
+        self.assertTrue("Suggestion b-c is referenced by b but does not exist."
+                        in response.content)
+        # Simulate button click to fix this problem.
+        response = self.client.post('/consistency/',
+                                    {'suggestion_missing': "Create missing"})
+        self.assertRedirects(response, '/consistency/')
+        # Check that the references are now gone.
+        self.assertEqual(Tag.all().count(), 1)
+        self.assertEqual(Tag.get_by_key_name('a').count, 1)
+        self.assertEqual(len(Tag.get_by_key_name('a').suggestions), 1)
+        response = self.client.get('/consistency/')
+        self.assertFalse('suggestion_missing' in response.context['problems'])
+        self.assertTrue("All referenced suggestions exist."
+                        in response.content)
+
+    def test_suggestion_author(self):
         # Check that this problem doesn't already exist.
         response = self.client.get('/consistency/')
         self.assertFalse('suggestion_author' in response.context['problems'])
@@ -91,8 +119,6 @@ class AdminTest(TestCase):
                         in response.content)
 
     def test_tag_count(self):
-        self.assertEqual(Suggestion.all().count(), 0)
-        self.assertEqual(Tag.all().count(), 0)
         # Check that this problem doesn't already exist.
         response = self.client.get('/consistency/')
         self.assertFalse('tag_count' in response.context['problems'])
