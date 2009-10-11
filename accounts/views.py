@@ -17,6 +17,8 @@ class LoginForm(forms.Form):
     def clean(self):
         email = self.cleaned_data.get('email', '')
         password = self.cleaned_data.get('password', '')
+        if not (email and password):
+            return self.cleaned_data # Enough errors already.
         user = auth.authenticate(username=email, password=password)
         if user is None:
             raise forms.ValidationError("Incorrect email or password.")
