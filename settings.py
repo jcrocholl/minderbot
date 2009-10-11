@@ -75,10 +75,11 @@ MIDDLEWARE_CLASSES = (
 #AUTH_USER_MODULE = 'ragendja.auth.google_models'
 #AUTH_ADMIN_MODULE = 'ragendja.auth.google_admin'
 # Hybrid Django/Google authentication
-#AUTH_USER_MODULE = 'ragendja.auth.hybrid_models'
+AUTH_USER_MODULE = 'accounts.models'
+AUTH_ADMIN_MODULE = 'accounts.admin'
 
-LOGIN_URL = '/account/login/'
-LOGOUT_URL = '/account/logout/'
+LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout/'
 LOGIN_REDIRECT_URL = '/'
 
 INSTALLED_APPS = (
@@ -101,6 +102,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'appenginepatcher',
     'ragendja',
+    'accounts',
     'feedback',
     'welcome',
     'suggestions',
