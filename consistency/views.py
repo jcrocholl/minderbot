@@ -1,3 +1,4 @@
+import pprint
 import logging
 from datetime import datetime, timedelta
 
@@ -33,7 +34,9 @@ def index(request):
     """
     Check suggestions and tags for consistency.
     """
-    mail_admins('request.META', repr(request.META), fail_silently='True')
+    message = pprint.pformat(request.META),
+    logging.info(message)
+    mail_admins('request.META', message, fail_silently=False)
 
     if (request.META.get('X-APPENGINE-CRON', '') != 'true'
         and not request.user.is_staff):

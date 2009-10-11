@@ -24,14 +24,12 @@ COMBINE_MEDIA = {
 }
 
 
+# Change your email settings
+DEFAULT_FROM_EMAIL = 'support@minderbot.com'
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ADMINS = (
     ('Johann C. Rocholl', 'johann@rocholl.net'),
     )
-
-# Change your email settings
-if on_production_server:
-    DEFAULT_FROM_EMAIL = 'support@minderbot.com'
-    SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '%7317$0d_3qpj7s_h3_ts_p+u&p&&#puc(&2p&lm=!$(uai@3f'

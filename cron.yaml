@@ -2,3 +2,4 @@ cron:
 - description: consistency check
   url: /consistency/
   schedule: every 10 minutes
+  timezone: America/Los_Angeles
