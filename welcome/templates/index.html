@@ -3,13 +3,13 @@
 {% block title %}Welcome{% endblock %}
 
 {% block content %}
-<h1>Welcome to the Minderbot</h1>
+<h1>Welcome to Minderbot</h1>
 
-<p>Do you want a reminder to replace your
-<a href="{% url suggestion_detail object_id='smoke-alarm-batteries' %}">smoke
-alarm batteries</a>?</p>
+<p>Do you want a reminder email to
+<a href="/suggestions/replace-smoke-alarm-batteries/">replace your
+smoke alarm batteries</a> every year?</p>
 
-<p>Do you have a <a href="{% url tags.views.detail key_name='car' %}">car</a>
-that needs regular maintenance?</p>
+<p>Do you have a <a href="/tags/car/">car</a> or a
+<a href="/tags/home/">home</a> that needs regular maintenance?</p>
 
 {% endblock %}
