@@ -4,7 +4,6 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from tags.models import Tag
-from suggestions.models import Suggestion
 from reminders.models import Reminder
 
 
@@ -19,17 +18,38 @@ class ReminderTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user('user', 'a@b.com', 'pass')
-        self.suggestion = Suggestion(
-            user=self.user,
-            title="Replace smoke alarm batteries",
-            tags='home safety smoke fire alarm batteries'.split(),
-            days=7)
-        self.suggestion.put()
 
     def test_reminder(self):
         reminder = Reminder(
-            suggestion=self.suggestion,
-            title="Replace smoke alarm batteries in the basement",
-            next=datetime(2008, 10, 10, 10, 10, 10))
-        self.assertEqual(unicode(reminder),
-                         "Replace smoke alarm batteries in the basement")
+            title="Replace smoke alarm batteries", year=1,
+            tags='home safety fire smoke alarm batteries'.split(),
+            next=datetime(2008, 10, 10, 10, 10, 10),
+            owner=self.user)
+        reminder.put()
+        self.assertEqual(unicode(reminder), "Replace smoke alarm batteries")
+
+
+class IntervalTest(TestCase):
+
+    def interval_test(self):
+        # Singular.
+        self.assertEqual(Reminder(days=1).interval(), 'day')
+        self.assertEqual(Reminder(weeks=1).interval(), 'week')
+        self.assertEqual(Reminder(days=7).interval(), 'week')
+        self.assertEqual(Reminder(months=1).interval(), 'month')
+        self.assertEqual(Reminder(years=1).interval(), 'year')
+        self.assertEqual(Reminder(miles=1).interval(), 'mile')
+        self.assertEqual(Reminder(kilometers=1).interval(), 'kilometer')
+        # Plural.
+        self.assertEqual(Reminder(days=2).interval(), '2 days')
+        self.assertEqual(Reminder(weeks=2).interval(), '2 weeks')
+        self.assertEqual(Reminder(days=14).interval(), '2 weeks')
+        self.assertEqual(Reminder(months=2).interval(), '2 months')
+        self.assertEqual(Reminder(years=2).interval(), '2 years')
+        self.assertEqual(Reminder(miles=2).interval(), '2 miles')
+        self.assertEqual(Reminder(kilometers=2).interval(), '2 kilometers')
+        # Alternatives.
+        self.assertEqual(Reminder(days=7, month=1).interval(),
+                         'week or month')
+        self.assertEqual(Reminder(miles=1000, kilometers=1600).interval(),
+                         '100 miles or 160 kilometers')
