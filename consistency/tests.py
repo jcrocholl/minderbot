@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from suggestions.models import Suggestion
 from tags.models import Tag
 
+from consistency import views
+
 
 class AnonymousTest(TestCase):
 
@@ -44,10 +46,15 @@ class AdminTest(TestCase):
         self.assertTrue(
             self.client.login(username='a@b.com', password='password'))
 
-    def test_suggestion_author(self):
-        # Check that this problem doesn't already exist.
+    def test_no_problem(self):
         response = self.client.get('/consistency/')
-        self.assertFalse('suggestion_author' in response.context['problems'])
+        self.assertFalse(response.context['problems'])
+        for problem in views.PROBLEM_MESSAGES:
+            self.assertFalse(problem in response.content)
+            self.assertTrue(views.PROBLEM_MESSAGES[problem][2]
+                            in response.content)
+
+    def test_suggestion_author(self):
         # Create a suggestion without an author.
         Suggestion(key_name='a-b', title='a b', tags='a b'.split()).put()
         # Check that the missing author is detected.
@@ -65,10 +72,7 @@ class AdminTest(TestCase):
                         in response.content)
 
     def test_suggestion_missing(self):
-        # Check that this problem doesn't already exist.
         self.assertEqual(Tag.all().count(), 0)
-        response = self.client.get('/consistency/')
-        self.assertFalse('suggestion_missing' in response.context['problems'])
         # Create tags but not all suggestions.
         Suggestion(key_name='a-b', title='a b', tags='a b'.split()).put()
         Tag(key_name='a', count=2, suggestions='a-b a-c'.split()).put()
@@ -95,9 +99,6 @@ class AdminTest(TestCase):
                         in response.content)
 
     def test_suggestion_tag(self):
-        # Check that this problem doesn't already exist.
-        response = self.client.get('/consistency/')
-        self.assertFalse('suggestion_tag' in response.context['problems'])
         # Create a suggestion and a tag.
         Suggestion(key_name='a-b', title='a b', tags='b'.split()).put()
         Tag(key_name='a', count=2, suggestions='a-b a-c'.split()).put()
@@ -118,9 +119,6 @@ class AdminTest(TestCase):
                         in response.content)
 
     def test_tag_count(self):
-        # Check that this problem doesn't already exist.
-        response = self.client.get('/consistency/')
-        self.assertFalse('tag_count' in response.context['problems'])
         # Create a tag with incorrect count.
         Tag(key_name='a', suggestions='a-b a-c'.split(), count=3).put()
         # Check that the incorrect count is detected.
@@ -139,10 +137,7 @@ class AdminTest(TestCase):
                         in response.content)
 
     def test_tag_missing(self):
-        # Check that this problem doesn't already exist.
         self.assertEqual(Tag.all().count(), 0)
-        response = self.client.get('/consistency/')
-        self.assertFalse('tag_missing' in response.context['problems'])
         # Create a suggestion but not the tags.
         Suggestion(key_name='a-b', title='a b', tags='a b'.split()).put()
         # Check that the missing tags are detected.
