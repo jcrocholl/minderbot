@@ -18,10 +18,10 @@ from consistency import repair
 
 
 PROBLEM_MESSAGES = {
-    'suggestion_author': [
-        "Claim authorship",
-        "Some suggestion have missing authors.",
-        "All suggestions have valid authors."],
+    'suggestion_owner': [
+        "Claim ownership",
+        "Some suggestion have missing owners.",
+        "All suggestions have valid owners."],
     'suggestion_missing': [
         "Delete dangling tag references",
         "Some suggestions are missing.",
@@ -81,12 +81,12 @@ def index(request):
     # Check for missing tags or missing references to suggestions.
     for suggestion in suggestion_list:
         try:
-            if suggestion.author is None:
-                problems['suggestion_author'].append(
-                    ("Author of %s is None.", suggestion))
+            if suggestion.owner is None:
+                problems['suggestion_owner'].append(
+                    ("Owner of %s is None.", suggestion))
         except datastore_errors.Error:
-            problems['suggestion_author'].append(
-                ("Author of %s could not be found.", suggestion))
+            problems['suggestion_owner'].append(
+                ("Owner of %s could not be found.", suggestion))
         for tag in suggestion.tags:
             if tag not in tag_dict:
                 problems['tag_missing'].append(

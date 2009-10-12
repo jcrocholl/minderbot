@@ -59,21 +59,21 @@ class AdminTest(TestCase):
         self.assertTrue('class="success"' in response.content)
         self.assertFalse('class="error"' in response.content)
 
-    def test_suggestion_author(self):
-        # Create a suggestion without an author.
+    def test_suggestion_owner(self):
+        # Create a suggestion without an owner.
         Suggestion(key_name='a-b', title='a b', tags='a b'.split()).put()
-        # Check that the missing author is detected.
+        # Check that the missing owner is detected.
         response = self.client.get('/consistency/')
-        self.assertTrue('suggestion_author' in response.context['problems'])
-        self.assertTrue("Author of a-b is None." in response.content)
+        self.assertTrue('suggestion_owner' in response.context['problems'])
+        self.assertTrue("Owner of a-b is None." in response.content)
         # Simulate button click to fix this problem.
         response = self.client.post('/consistency/',
-                                    {'suggestion_author': "Claim authorship"})
+                                    {'suggestion_owner': "Claim ownership"})
         self.assertRedirects(response, '/consistency/')
         # Check that the tags are now existing.
         response = self.client.get('/consistency/')
-        self.assertFalse('suggestion_author' in response.context['problems'])
-        self.assertTrue("All suggestions have valid authors."
+        self.assertFalse('suggestion_owner' in response.context['problems'])
+        self.assertTrue("All suggestions have valid owners."
                         in response.content)
 
     def test_suggestion_missing(self):

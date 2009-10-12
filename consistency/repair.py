@@ -11,9 +11,9 @@ def save_tag(tag):
         tag.delete()
 
 
-def suggestion_author(request, problems):
+def suggestion_owner(request, problems):
     for text, suggestion in problems:
-        suggestion.author = request.user
+        suggestion.owner = request.user
         suggestion.put()
     return HttpResponseRedirect(request.path)
 

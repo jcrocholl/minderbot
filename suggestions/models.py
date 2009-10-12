@@ -10,7 +10,7 @@ class Suggestion(db.Model):
 
     The slug (unique name for use in URL) is the key name.
     """
-    user = db.ReferenceProperty(User)
+    owner = db.ReferenceProperty(User)
     created = db.DateTimeProperty(auto_now_add=True)
     title = db.StringProperty(required=True)
     tags = db.StringListProperty()
