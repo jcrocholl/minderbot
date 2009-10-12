@@ -117,6 +117,27 @@ class AdminTest(TestCase):
         self.assertTrue("All tag-suggestion references have a reverse."
                         in response.content)
 
+    def test_tag_count(self):
+        # Check that this problem doesn't already exist.
+        response = self.client.get('/consistency/')
+        self.assertFalse('tag_count' in response.context['problems'])
+        # Create a tag with incorrect count.
+        Tag(key_name='a', suggestions='a-b a-c'.split(), count=3).put()
+        # Check that the incorrect count is detected.
+        response = self.client.get('/consistency/')
+        self.assertTrue('tag_count' in response.context['problems'])
+        self.assertTrue("Tag a has count 3 but references 2 suggestions."
+                        in response.content)
+        # Simulate button click to fix this problem.
+        response = self.client.post('/consistency/',
+                                    {'tag_count': "Adjust tag counts"})
+        self.assertRedirects(response, '/consistency/')
+        # Check that the count is now correct.
+        response = self.client.get('/consistency/')
+        self.assertFalse('tag_count' in response.context['problems'])
+        self.assertTrue("All tag count fields are correct."
+                        in response.content)
+
     def test_tag_missing(self):
         # Check that this problem doesn't already exist.
         self.assertEqual(Tag.all().count(), 0)
@@ -140,25 +161,3 @@ class AdminTest(TestCase):
         response = self.client.get('/consistency/')
         self.assertFalse('tag_missing' in response.context['problems'])
         self.assertTrue("All referenced tags exist." in response.content)
-
-    def test_tag_count(self):
-        # Check that this problem doesn't already exist.
-        response = self.client.get('/consistency/')
-        self.assertFalse('tag_count' in response.context['problems'])
-        # Create a tag with incorrect count.
-        Tag(key_name='a', suggestions='a-b a-c'.split(), count=3).put()
-        # Check that the incorrect count is detected.
-        response = self.client.get('/consistency/')
-        self.assertTrue('tag_count' in response.context['problems'])
-        self.assertTrue("Tag a has count 3 but references 2 suggestions."
-                        in response.content)
-        # Simulate button click to fix this problem.
-        response = self.client.post('/consistency/',
-                                    {'tag_count': "Adjust tag counts"})
-        self.assertRedirects(response, '/consistency/')
-        # Check that the count is now correct.
-        response = self.client.get('/consistency/')
-        self.assertFalse('tag_count' in response.context['problems'])
-        self.assertTrue("All tag count fields are correct."
-                        in response.content)
-
