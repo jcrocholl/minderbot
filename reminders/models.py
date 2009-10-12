@@ -3,19 +3,61 @@ from google.appengine.ext import db
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
-from suggestions.models import Suggestion
 
-
-class Reminder(Suggestion):
+class Reminder(db.Model):
     """
-    Actual instance of a reminder, created by a user.
+    If owner is None, a public suggestion:
+        Replace smoke alarm batteries every year.
+    The key name for suggestions is a slug that appears in the URL.
 
-    The key name is a unique random hex string for generating a URL.
+    If owner is set, an actual instance of a reminder:
+        Joe wants to replace smoke alarm batteries every year,
+        next time on Feb 6, 2010.
+    The key name for reminders is a unique random hex string.
     """
-    suggestion = db.ReferenceProperty(Suggestion, required=False)
-    next = db.DateTimeProperty(required=True)
+    owner = db.ReferenceProperty(User)
+    title = db.StringProperty(required=True)
+    tags = db.StringListProperty()
+    days = db.IntegerProperty()
+    months = db.IntegerProperty()
+    years = db.IntegerProperty()
+    miles = db.IntegerProperty()
+    kilometers = db.IntegerProperty()
+    next = db.DateTimeProperty()
     previous = db.DateTimeProperty()
+    created = db.DateTimeProperty(auto_now_add=True)
+
+    def __unicode__(self):
+        return self.title
 
     def get_absolute_url(self):
-        return reverse('reminder_detail',
-                       kwargs={'object_id': self.key().name()})
+        if owner:
+            return reverse('reminder_detail',
+                           kwargs={'object_id': self.key().name()})
+        else:
+            return reverse('suggestion_detail',
+                           kwargs={'object_id': self.key().name()})
+
+    def interval(self):
+        weeks = None
+        days = self.days
+        if days % 7 == 0:
+            weeks = days / 7
+            days = None
+        parts = []
+        # Singular.
+        if days == 1: parts.append('day')
+        if weeks == 1: parts.append('week')
+        if self.months == 1: parts.append('month')
+        if self.years == 1: parts.append('year')
+        if self.miles == 1: parts.append('mile')
+        if self.kilometers == 1: parts.append('kilometer')
+        # Plural.
+        if days > 1: parts.append('%d days' % days)
+        if weeks > 1: parts.append('%d weeks' % weeks)
+        if self.months > 1: parts.append('%d months' % self.months)
+        if self.years > 1: parts.append('%d years' % self.years)
+        if self.miles > 1: parts.append('%d miles' % self.miles)
+        if self.kilometers > 1:
+            parts.append('%d kilometers' % self.kilometers)
+        return ' or '.join(parts)
