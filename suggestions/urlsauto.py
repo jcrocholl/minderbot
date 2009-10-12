@@ -9,7 +9,10 @@ info_dict = {
 }
 
 urlpatterns = patterns('',
-    (r'^$', object_list, info_dict, 'suggestion_list'),
-    (r'^(?P<object_id>[a-z0-9-]+)/$', object_detail, info_dict,
-     'suggestion_detail'),
+    url(r'^$', object_list,
+        dict(info_dict, template_name='suggestions/index.html'),
+        name='suggestion_list'),
+    url(r'^(?P<object_id>[a-z0-9-]+)/$', object_detail,
+        dict(info_dict, template_name='suggestions/detail.html'),
+        name='suggestion_detail'),
 )
