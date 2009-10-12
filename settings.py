@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from ragendja.settings_pre import *
 
 # Increase this when you update your media on the production site, so users
