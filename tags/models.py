@@ -8,7 +8,7 @@ class Tag(db.Model):
     Each tag has a list of matching reminders. For performance, the
     tag name is the datastore key name, not a StringProperty.
     """
-    reminders = db.StringListProperty()
+    suggestions = db.StringListProperty()
     count = db.IntegerProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
 
@@ -23,7 +23,7 @@ class Tag(db.Model):
         pixels = 12 + min(20, self.count)
         return '%dpx' % pixels
 
-    def get_reminders(self):
+    def get_suggestions(self):
         keys = [db.Key.from_path('reminders_reminder', key_name)
-                for key_name in self.reminders]
+                for key_name in self.suggestions]
         return db.get(keys)
