@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ reminder.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ reminder.title }}</h1>
+
+<p>Every {{ reminder.interval }}</p>
+
+<p>{% for tag in reminder.tags %}
+<a href="/tags/{{ tag }}/">{{ tag }}</a>
+{% endfor %}</p>
+
+<p class="gray small">This reminder was created
+{{ reminder.created|timesince }} ago.</p>
+{% endblock %}

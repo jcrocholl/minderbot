@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Reminders{% endblock %}
+
+{% block content %}
+<h1>Reminders</h1>
+
+<ul>
+{% for reminder in reminder_list %}
+<li><a href="{{ reminder.get_absolute_url }}">{{ reminder }}</a>
+every {{ reminder.interval }}</li>
+{% endfor %}
+</ul>
+{% endblock %}
