@@ -79,7 +79,7 @@ def tag_missing(request, problems):
     return HttpResponseRedirect(request.path)
 
 
-def tag_suggestions(request, problems):
+def tag_suggestion(request, problems):
     for text, tag, suggestion in problems:
         tag.suggestions.append(suggestion.key().name())
         tag.count = len(tag.suggestions)

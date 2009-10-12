@@ -208,3 +208,30 @@ class AdminTest(TestCase):
         response = self.client.get('/consistency/')
         self.assertFalse('tag_missing' in response.context['problems'])
         self.assertTrue("All referenced tags exist." in response.content)
+
+    def test_tag_suggestion(self):
+        # Create a suggestion but not the tags.
+        Suggestion(key_name='a-b', title='a b', tags='a b'.split()).put()
+        Suggestion(key_name='b-c', title='b c', tags='b'.split()).put()
+        Tag(key_name='a', suggestions='a-b'.split(), count=0).put()
+        Tag(key_name='b', suggestions='b-c'.split(), count=0).put()
+        self.assertEqual(Suggestion.all().count(), 2)
+        self.assertEqual(Tag.all().count(), 2)
+        self.assertEqual(len(Tag.get_by_key_name('b').suggestions), 1)
+        # Check that the missing tag-suggestion reference is detected.
+        response = self.client.get('/consistency/')
+        self.assertTrue('tag_suggestion' in response.context['problems'])
+        self.assertTrue("Tag b does not reverse reference a-b."
+                        in response.content)
+        # Simulate button click to fix this problem.
+        response = self.client.post('/consistency/',
+                                    {'tag_suggestion': "Create references"})
+        self.assertRedirects(response, '/consistency/')
+        # Check that the tags are now existing.
+        self.assertEqual(Suggestion.all().count(), 2)
+        self.assertEqual(Tag.all().count(), 2)
+        self.assertEqual(len(Tag.get_by_key_name('b').suggestions), 2)
+        response = self.client.get('/consistency/')
+        self.assertFalse('tag_suggestion' in response.context['problems'])
+        self.assertTrue("All suggestion-tag references have a reverse."
+                        in response.content)
