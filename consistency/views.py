@@ -81,9 +81,7 @@ def index(request):
     # Check for missing tags or missing references to reminders.
     for reminder in reminder_list:
         try:
-            if reminder.owner is None:
-                problems['reminder_owner'].append(
-                    ("Owner of %s is None.", reminder))
+            owner = reminder.owner # Use automatic dereferencing.
         except datastore_errors.Error:
             problems['reminder_owner'].append(
                 ("Owner of %s does not exist.", reminder))
