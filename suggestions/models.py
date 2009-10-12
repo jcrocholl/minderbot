@@ -31,13 +31,16 @@ class Suggestion(db.Model):
         parts = []
         # Singular.
         if self.days == 1: parts.append('day')
+        if self.days == 7: parts.append('week')
         if self.months == 1: parts.append('month')
         if self.years == 1: parts.append('year')
         if self.miles == 1: parts.append('mile')
-        if self.kilometers == 1:
-            parts.append('kilometer')
+        if self.kilometers == 1: parts.append('kilometer')
         # Plural.
-        if self.days > 1: parts.append('%d days' % self.days)
+        if self.days % 7 == 0:
+            if self.days > 7: parts.append('%d weeks' % self.days / 7)
+        else:
+            if self.days > 1: parts.append('%d days' % self.days)
         if self.months > 1: parts.append('%d months' % self.months)
         if self.years > 1: parts.append('%d years' % self.years)
         if self.miles > 1: parts.append('%d miles' % self.miles)
