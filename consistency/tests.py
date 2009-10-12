@@ -55,6 +55,8 @@ class AdminTest(TestCase):
             self.assertFalse(problem in response.content)
             self.assertTrue(views.PROBLEM_MESSAGES[problem][2]
                             in response.content)
+        self.assertTrue('class="success"' in response.content)
+        self.assertFalse('class="error"' in response.content)
 
     def test_suggestion_author(self):
         # Create a suggestion without an author.
@@ -163,6 +165,27 @@ class AdminTest(TestCase):
         response = self.client.get('/consistency/')
         self.assertFalse('tag_created' in response.context['problems'])
         self.assertTrue("All tag timestamps are reasonable."
+                        in response.content)
+
+    def test_tag_empty(self):
+        # Create a tag without suggestion references.
+        self.assertEqual(Tag.all().count(), 0)
+        Tag(key_name='a', suggestions=[], count=0).put()
+        self.assertEqual(Tag.all().count(), 1)
+        # Check that the empty tag is detected.
+        response = self.client.get('/consistency/')
+        self.assertTrue('tag_empty' in response.context['problems'])
+        self.assertTrue("Tag a does not reference any suggestions."
+                        in response.content)
+        # Simulate button click to fix this problem.
+        response = self.client.post('/consistency/',
+                                    {'tag_empty': "Create missing tags"})
+        self.assertRedirects(response, '/consistency/')
+        # Check that the tags are now existing.
+        self.assertEqual(Tag.all().count(), 0)
+        response = self.client.get('/consistency/')
+        self.assertFalse('tag_empty' in response.context['problems'])
+        self.assertTrue("All tags reference at least one suggestion."
                         in response.content)
 
     def test_tag_missing(self):
