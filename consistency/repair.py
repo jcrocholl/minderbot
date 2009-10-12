@@ -1,5 +1,3 @@
-import logging
-
 from django.http import HttpResponseRedirect
 
 from suggestions.models import Suggestion
@@ -8,17 +6,14 @@ from tags.models import Tag
 
 def save_tag(tag):
     if tag.count:
-        logging.debug('updating %s', repr(tag))
         tag.put()
     else:
-        logging.debug('deleting %s', repr(tag))
         tag.delete()
 
 
 def suggestion_author(request, problems):
     for text, suggestion in problems:
         suggestion.author = request.user
-        logging.debug('updating %s', repr(suggestion))
         suggestion.put()
     return HttpResponseRedirect(request.path)
 
@@ -34,7 +29,6 @@ def suggestion_missing(request, problems):
 def suggestion_tag(request, problems):
     for text, suggestion, tag in problems:
         suggestion.tags.append(tag.key().name())
-        logging.debug('updating %s', repr(suggestion))
         suggestion.put()
     return HttpResponseRedirect(request.path)
 
@@ -75,7 +69,6 @@ def tag_missing(request, problems):
                   suggestions=suggestion_names,
                   created=created)
         tag.put()
-        logging.debug('created %s', repr(tag))
     return HttpResponseRedirect(request.path)
 
 
