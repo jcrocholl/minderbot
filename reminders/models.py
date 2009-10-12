@@ -31,7 +31,7 @@ class Reminder(db.Model):
         return self.title
 
     def get_absolute_url(self):
-        if owner:
+        if self.owner:
             return reverse('reminder_detail',
                            kwargs={'object_id': self.key().name()})
         else:
@@ -41,7 +41,7 @@ class Reminder(db.Model):
     def interval(self):
         weeks = None
         days = self.days
-        if days % 7 == 0:
+        if days and days % 7 == 0:
             weeks = days / 7
             days = None
         parts = []
