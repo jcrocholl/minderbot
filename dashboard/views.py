@@ -83,7 +83,7 @@ def submit_suggestion(request, suggestion_form):
         tag.count += 1
         tag.put()
     suggestion = Suggestion(
-        author=request.user,
+        owner=request.user,
         key_name=suggestion_slug,
         title=suggestion_form.cleaned_data['title'],
         days=suggestion_form.cleaned_data['days'],

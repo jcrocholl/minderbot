@@ -4,12 +4,12 @@ from suggestions.models import Suggestion
 
 
 class SuggestionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'interval', 'author', 'created')
+    list_display = ('title', 'interval', 'owner', 'created')
     fieldsets = (
         (None, {
-            'fields': ('title', 
+            'fields': ('title', 'tags',
                        ('days', 'months', 'years', 'miles', 'kilometers'),
-                       'author', 'created', 'tags')
+                       'owner', 'created')
             }),
         )
 
