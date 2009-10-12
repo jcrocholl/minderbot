@@ -122,8 +122,10 @@ def index(request):
                      suggestion, tag))
             if oldest is None or suggestion.created < oldest.created:
                 oldest = suggestion
-        if tag.created is None or (
-            oldest and tag.created > oldest.created):
+        if tag.created is None:
+            problems['tag_created'].append(
+                ("Timestamp of tag %s is not set.", tag, oldest))
+        elif oldest and tag.created > oldest.created:
             problems['tag_created'].append(
                 ("Timestamp of tag %s is younger than %s.", tag, oldest))
 
@@ -176,6 +178,6 @@ def format_problem(problem):
             problem[index] = problem[index].key().name()
         except AttributeError:
             pass
-    logging.info(problem[0])
-    logging.info(problem[1:])
-    return problem[0] % tuple(problem[1:])
+    message = problem.pop(0)
+    arguments = tuple(problem[:message.count('%')])
+    return message % arguments

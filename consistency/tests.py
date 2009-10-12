@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.test import TestCase
 from django.contrib.auth.models import User
 
@@ -134,6 +136,33 @@ class AdminTest(TestCase):
         response = self.client.get('/consistency/')
         self.assertFalse('tag_count' in response.context['problems'])
         self.assertTrue("All tag count fields are correct."
+                        in response.content)
+
+    def test_tag_created(self):
+        # Create two tags with incorrect timestamp.
+        Suggestion(key_name='a-b', title='a b', tags='a b'.split(),
+                   created=datetime.now() - timedelta(hours=3)).put()
+        Tag(key_name='a', suggestions='a-b'.split(), count=1,
+            created=None).put()
+        Tag(key_name='b', suggestions='a-b'.split(), count=1).put()
+        # Check that the incorrect count is detected.
+        response = self.client.get('/consistency/')
+        self.assertTrue('tag_created' in response.context['problems'])
+        self.assertTrue("Timestamp of tag a is not set." in response.content)
+        self.assertTrue("Timestamp of tag b is younger than a-b."
+                        in response.content)
+        # Simulate button click to fix this problem.
+        response = self.client.post('/consistency/',
+                                    {'tag_created': "Adjust timestamps"})
+        self.assertRedirects(response, '/consistency/')
+        # Check that the timestamps are now correct.
+        self.assertEqual(Suggestion.get_by_key_name('a-b').created,
+                         Tag.get_by_key_name('a').created)
+        self.assertEqual(Suggestion.get_by_key_name('a-b').created,
+                         Tag.get_by_key_name('b').created)
+        response = self.client.get('/consistency/')
+        self.assertFalse('tag_created' in response.context['problems'])
+        self.assertTrue("All tag timestamps are reasonable."
                         in response.content)
 
     def test_tag_missing(self):
