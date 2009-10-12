@@ -18,14 +18,18 @@ from consistency import repair
 
 
 PROBLEM_MESSAGES = {
-    'tag_missing': [
-        "Create missing tags",
-        "Some referenced tags don't exist.",
-        "All referenced tags exist."],
-    'tag_suggestion': [
+    'suggestion_author': [
+        "Claim authorship",
+        "Some suggestion have missing authors.",
+        "All suggestions have valid authors."],
+    'suggestion_missing': [
+        "Delete dangling tag references",
+        "Some suggestions are missing.",
+        "All referenced suggestions exist."],
+    'suggestion_tag': [
         "Create missing references",
-        "Some suggestion-tag references don't have a reverse.",
-        "All suggestion-tag references have a reverse."],
+        "Some tag-suggestion references don't have a reverse.",
+        "All tag-suggestion references have a reverse."],
     'tag_count': [
         "Adjust count fields",
         "Some tag count fields are incorrect.",
@@ -38,18 +42,14 @@ PROBLEM_MESSAGES = {
         "Delete empty tags",
         "Some tags don't reference any suggestions.",
         "All tags reference at least one suggestion."],
-    'suggestion_missing': [
-        "Delete dangling tag references",
-        "Some suggestions are missing.",
-        "All referenced suggestions exist."],
-    'suggestion_author': [
-        "Claim authorship",
-        "Some suggestion have missing authors.",
-        "All suggestions have valid authors."],
-    'suggestion_tag': [
+    'tag_missing': [
+        "Create missing tags",
+        "Some referenced tags don't exist.",
+        "All referenced tags exist."],
+    'tag_suggestion': [
         "Create missing references",
-        "Some tag-suggestion references don't have a reverse.",
-        "All tag-suggestion references have a reverse."]
+        "Some suggestion-tag references don't have a reverse.",
+        "All suggestion-tag references have a reverse."],
     }
 
 
