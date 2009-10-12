@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 class Tag(db.Model):
     """
     Each tag has a list of matching suggestions. For performance, the
-    tag name is the datastore key name, not in a StringProperty.
+    tag name is the datastore key name, not a StringProperty.
     """
     suggestions = db.StringListProperty()
     count = db.IntegerProperty(required=True)
