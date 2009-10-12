@@ -5,22 +5,27 @@ from django.core.urlresolvers import reverse
 
 
 class Suggestion(db.Model):
+    """
+    Public template for reminders.
+
+    The slug (unique name for use in URL) is the key name.
+    """
+    user = db.ReferenceProperty(User)
+    created = db.DateTimeProperty(auto_now_add=True)
     title = db.StringProperty(required=True)
+    tags = db.StringListProperty()
     days = db.IntegerProperty()
     months = db.IntegerProperty()
     years = db.IntegerProperty()
     miles = db.IntegerProperty()
     kilometers = db.IntegerProperty()
-    tags = db.StringListProperty()
-    author = db.ReferenceProperty(User)
-    created = db.DateTimeProperty(auto_now_add=True)
 
     def __unicode__(self):
-        return self.title[:50]
+        return self.title
 
     def get_absolute_url(self):
         return reverse('suggestion_detail',
-                       kwargs={'object_id': self.key().id_or_name()})
+                       kwargs={'object_id': self.key().name()})
 
     def interval(self):
         parts = []
