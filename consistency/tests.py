@@ -24,17 +24,19 @@ class NotAdminTest(TestCase):
         self.assertTrue(
             self.client.login(username='a@b.com', password='password'))
 
-    def test_index(self):
+    def test_not_admin(self):
         response = self.client.get('/consistency/')
         self.assertRedirects(response, '/accounts/login/?next=/consistency/')
 
 
 class CronTest(TestCase):
 
-    def test_index(self):
+    def test_cron(self):
         response = self.client.get('/consistency/',
                                    HTTP_X_APPENGINE_CRON='true')
         self.failUnlessEqual(response.status_code, 200)
+        print response
+        self.assertEqual(response['Content-Type'], 'text/plain')
         self.assertTrue('http://' in response.content)
         self.assertTrue('/consistency/' in response.content)
 

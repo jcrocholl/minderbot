@@ -145,7 +145,7 @@ def index(request):
              [format_problem(item) for item in items]))
         consistency_results.sort()
 
-    if problems and request.META.get('HTTP_X_APPENGINE_CRON', '') == 'true':
+    if request.META.get('HTTP_X_APPENGINE_CRON', '') == 'true':
         message = []
         for name in problems:
             message.append(PROBLEM_MESSAGES[name][1].rstrip('.') + ':')
@@ -154,9 +154,10 @@ def index(request):
             message.append('')
         message.append('http://minderbot.appspot.com/consistency/')
         message = '\n'.join(message)
-        logging.error(message)
-        mail_admins('Consistency check found problems',
-                    message, fail_silently=True)
+        if problems:
+            logging.error(message)
+            mail_admins('Consistency check found problems',
+                        message, fail_silently=True)
         return HttpResponse(message, mimetype="text/plain")
 
     # Fix inconsistencies if admin clicked one of the buttons.
