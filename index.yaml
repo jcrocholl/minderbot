@@ -17,14 +17,14 @@ indexes:
   - name: object_id
   - name: action_time
 
-# Used 3 times in query history.
+# Used 2 times in query history.
 - kind: django_admin_log
   properties:
   - name: user
   - name: action_time
     direction: desc
 
-# Used 20 times in query history.
+# Used 52 times in query history.
 - kind: feedback_feedback
   properties:
   - name: page
@@ -33,10 +33,23 @@ indexes:
   - name: submitted
     direction: desc
 
-# Used once in query history.
+# Used 8 times in query history.
 - kind: feedback_feedback
   properties:
   - name: points
     direction: desc
   - name: submitted
+    direction: desc
+
+# Used 8 times in query history.
+- kind: reminders_reminder
+  properties:
+  - name: owner
+  - name: created
+
+# Used 4 times in query history.
+- kind: reminders_reminder
+  properties:
+  - name: owner
+  - name: created
     direction: desc
