@@ -4,7 +4,6 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from tags.models import Tag
-from suggestions.models import Suggestion
 from reminders.models import Reminder
 
 
@@ -17,12 +16,8 @@ class ClientTest(TestCase):
 
 class SuggestionTest(TestCase):
 
-    def setUp(self):
-        self.user = User.objects.create_user('user', 'a@b.com', 'pass')
-
     def test_suggestion(self):
-        suggestion = Suggestion(
-            user=self.user,
+        suggestion = Reminder(
             title="Replace smoke alarm batteries",
             tags='home safety smoke fire alarm batteries'.split(),
             days=7)

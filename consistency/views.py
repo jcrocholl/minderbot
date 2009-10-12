@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 
 from ragendja.template import render_to_response
 
-from suggestions.models import Suggestion
+from reminders.models import Reminder
 from tags.models import Tag
 from feedback.models import Feedback
 
@@ -18,18 +18,18 @@ from consistency import repair
 
 
 PROBLEM_MESSAGES = {
-    'suggestion_owner': [
+    'reminder_owner': [
         "Claim ownership",
-        "Some suggestion have missing owners.",
-        "All suggestions have valid owners."],
-    'suggestion_missing': [
+        "Some reminder have missing owners.",
+        "All reminders have valid owners."],
+    'reminder_missing': [
         "Delete dangling tag references",
-        "Some suggestions are missing.",
-        "All referenced suggestions exist."],
-    'suggestion_tag': [
+        "Some reminders are missing.",
+        "All referenced reminders exist."],
+    'reminder_tag': [
         "Create missing references",
-        "Some tag-suggestion references don't have a reverse.",
-        "All tag-suggestion references have a reverse."],
+        "Some tag-reminder references don't have a reverse.",
+        "All tag-reminder references have a reverse."],
     'tag_count': [
         "Adjust count fields",
         "Some tag count fields are incorrect.",
@@ -40,32 +40,32 @@ PROBLEM_MESSAGES = {
         "All tag timestamps are reasonable."],
     'tag_empty': [
         "Delete empty tags",
-        "Some tags don't reference any suggestions.",
-        "All tags reference at least one suggestion."],
+        "Some tags don't reference any reminders.",
+        "All tags reference at least one reminder."],
     'tag_missing': [
         "Create missing tags",
         "Some referenced tags don't exist.",
         "All referenced tags exist."],
-    'tag_suggestion': [
+    'tag_reminder': [
         "Create missing references",
-        "Some suggestion-tag references don't have a reverse.",
-        "All suggestion-tag references have a reverse."],
+        "Some reminder-tag references don't have a reverse.",
+        "All reminder-tag references have a reverse."],
     }
 
 
 def index(request):
     """
-    Check suggestions and tags for consistency.
+    Check reminders and tags for consistency.
     """
     if (request.META.get('HTTP_X_APPENGINE_CRON', '') != 'true'
         and not request.user.is_staff):
         return HttpResponseRedirect('/accounts/login/?next=/consistency/')
 
-    # Get all suggestions.
-    suggestion_list = Suggestion.all().fetch(1000) # TODO: fetch unlimited
-    suggestion_dict = {}
-    for suggestion in suggestion_list:
-        suggestion_dict[suggestion.key().name()] = suggestion
+    # Get all reminders.
+    reminder_list = Reminder.all().fetch(1000) # TODO: fetch unlimited
+    reminder_dict = {}
+    for reminder in reminder_list:
+        reminder_dict[reminder.key().name()] = reminder
 
     # Get all tags.
     tag_list = Tag.all().fetch(1000) # TODO: fetch unlimited
@@ -78,50 +78,50 @@ def index(request):
     for problem in PROBLEM_MESSAGES:
         problems[problem] = []
 
-    # Check for missing tags or missing references to suggestions.
-    for suggestion in suggestion_list:
+    # Check for missing tags or missing references to reminders.
+    for reminder in reminder_list:
         try:
-            if suggestion.owner is None:
-                problems['suggestion_owner'].append(
-                    ("Owner of %s is None.", suggestion))
+            if reminder.owner is None:
+                problems['reminder_owner'].append(
+                    ("Owner of %s is None.", reminder))
         except datastore_errors.Error:
-            problems['suggestion_owner'].append(
-                ("Owner of %s could not be found.", suggestion))
-        for tag in suggestion.tags:
+            problems['reminder_owner'].append(
+                ("Owner of %s does not exist.", reminder))
+        for tag in reminder.tags:
             if tag not in tag_dict:
                 problems['tag_missing'].append(
                     ("Tag %s is referenced by %s but does not exist.",
-                     tag, suggestion))
+                     tag, reminder))
                 continue
             tag = tag_dict[tag]
-            if suggestion.key().name() not in tag.suggestions:
-                problems['tag_suggestion'].append(
+            if reminder.key().name() not in tag.reminders:
+                problems['tag_reminder'].append(
                     ("Tag %s does not reverse reference %s.",
-                     tag, suggestion))
+                     tag, reminder))
 
-    # Check for missing suggestions or missing references to tags.
+    # Check for missing reminders or missing references to tags.
     for tag in tag_list:
-        if tag.count != len(tag.suggestions):
+        if tag.count != len(tag.reminders):
             problems['tag_count'].append(
-                ("Tag %s has count %d but references %d suggestions.",
-                 tag, tag.count, len(tag.suggestions)))
+                ("Tag %s has count %d but references %d reminders.",
+                 tag, tag.count, len(tag.reminders)))
         elif tag.count == 0:
             problems['tag_empty'].append(
-                ("Tag %s does not reference any suggestions.", tag))
+                ("Tag %s does not reference any reminders.", tag))
         oldest = None
-        for suggestion in tag.suggestions:
-            if suggestion not in suggestion_dict:
-                problems['suggestion_missing'].append(
-                    ("Suggestion %s is referenced by %s but does not exist.",
-                     suggestion, tag))
+        for reminder in tag.reminders:
+            if reminder not in reminder_dict:
+                problems['reminder_missing'].append(
+                    ("Reminder %s is referenced by %s but does not exist.",
+                     reminder, tag))
                 continue
-            suggestion = suggestion_dict[suggestion]
-            if tag.key().name() not in suggestion.tags:
-                problems['suggestion_tag'].append(
-                    ("Suggestion %s does not reverse reference %s.",
-                     suggestion, tag))
-            if oldest is None or suggestion.created < oldest.created:
-                oldest = suggestion
+            reminder = reminder_dict[reminder]
+            if tag.key().name() not in reminder.tags:
+                problems['reminder_tag'].append(
+                    ("Reminder %s does not reverse reference %s.",
+                     reminder, tag))
+            if oldest is None or reminder.created < oldest.created:
+                oldest = reminder
         if tag.created is None:
             problems['tag_created'].append(
                 ("Timestamp of tag %s is not set.", tag, oldest))

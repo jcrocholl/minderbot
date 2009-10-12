@@ -1,0 +1,12 @@
+[
+{% for reminder in reminder_list %}  {
+    "pk": "{{ reminder.key }}",
+    "model": "reminders.reminder",
+    "fields": {
+      "author": "{{ reminder.owner.email }}",
+      "created": "{{ reminder.created|date:"Y-m-d H:i:s" }}",
+      "title": "{{ reminder.title }}",
+      "tags": ["{{ reminder.tags|join:'", "' }}"]
+    }
+  }{% if not forloop.last %},{% endif %}
+{% endfor %}]
