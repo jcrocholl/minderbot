@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from suggestions.models import Suggestion
+from reminders.models import Reminder
 
 
-class SuggestionAdmin(admin.ModelAdmin):
+class ReminderAdmin(admin.ModelAdmin):
     list_display = ('title', 'interval', 'owner', 'created')
     fieldsets = (
         (None, {
@@ -14,4 +14,4 @@ class SuggestionAdmin(admin.ModelAdmin):
         )
 
 
-admin.site.register(Suggestion, SuggestionAdmin)
+admin.site.register(Reminder, ReminderAdmin)
