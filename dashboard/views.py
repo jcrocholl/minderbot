@@ -39,6 +39,9 @@ class SuggestionForm(forms.Form):
 
 @staff_only
 def index(request):
+    """
+    Display the current system status.
+    """
     # Simple form to add new suggestions.
     suggestion_form = SuggestionForm(request.POST or None)
     if suggestion_form.is_valid():
@@ -76,6 +79,9 @@ def index(request):
 
 
 def submit_suggestion(request, suggestion_form):
+    """
+    Save a new suggestion in the database.
+    """
     slug = suggestion_form.cleaned_data['slug']
     tag_list = suggestion_form.cleaned_data['tags'].split()
     for tag_name in tag_list:
