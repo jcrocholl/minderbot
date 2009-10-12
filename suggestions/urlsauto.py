@@ -1,10 +1,10 @@
 from django.conf.urls.defaults import *
 from django.views.generic.list_detail import object_list, object_detail
 
-from models import Suggestion
+from reminders.models import Reminder
 
 info_dict = {
-    'queryset': Suggestion.all(),
+    'queryset': Reminder.all().filter('owner', None),
     'template_object_name': 'suggestion',
 }
 
