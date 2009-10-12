@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from ragendja.template import render_to_response
 from ragendja.auth.decorators import staff_only
 
-from suggestions.models import Suggestion
+from reminders.models import Reminder
 from tags.models import Tag
 from feedback.models import Feedback
 
@@ -44,13 +44,16 @@ def index(request):
     if suggestion_form.is_valid():
         return submit_suggestion(request, suggestion_form)
 
-    # Show newest suggestions.
+    # Recent time intervals.
     day = datetime.now() - timedelta(hours=24)
     week = datetime.now() - timedelta(days=7)
-    suggestion_count = Suggestion.all().count()
-    suggestion_count_24h = Suggestion.all().filter('created >', day).count()
-    suggestion_count_7d = Suggestion.all().filter('created >', week).count()
-    suggestion_list = Suggestion.all().order('-created').fetch(RECENT_LIMIT)
+
+    # Show newest suggestions.
+    suggestions = Reminder.all().filter('owner', None)
+    suggestion_count = suggestions.count()
+    suggestion_count_24h = suggestions.filter('created >', day).count()
+    suggestion_count_7d = suggestions.filter('created >', week).count()
+    suggestion_list = suggestions.order('-created').fetch(RECENT_LIMIT)
 
     # Show newest tags.
     tag_count = Tag.all().count()
@@ -73,26 +76,24 @@ def index(request):
 
 
 def submit_suggestion(request, suggestion_form):
-    suggestion_slug = suggestion_form.cleaned_data['slug']
+    slug = suggestion_form.cleaned_data['slug']
     tag_list = suggestion_form.cleaned_data['tags'].split()
     for tag_name in tag_list:
         tag = Tag.get_by_key_name(tag_name)
         if tag is None:
             tag = Tag(key_name=tag_name, count=0)
-        tag.suggestions.append(suggestion_slug)
+        tag.suggestions.append(slug)
         tag.count += 1
         tag.put()
-    suggestion = Suggestion(
-        owner=request.user,
-        key_name=suggestion_slug,
+    suggestion = Reminder(
+        key_name=slug,
         title=suggestion_form.cleaned_data['title'],
         days=suggestion_form.cleaned_data['days'],
         months=suggestion_form.cleaned_data['months'],
         years=suggestion_form.cleaned_data['years'],
         miles=suggestion_form.cleaned_data['miles'],
         kilometers=suggestion_form.cleaned_data['kilometers'],
-        tags=tag_list,
-        submitter=request.user)
+        tags=tag_list)
     logging.debug(suggestion)
     suggestion.put()
     return HttpResponseRedirect(suggestion.get_absolute_url())
