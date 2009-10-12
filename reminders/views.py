@@ -13,4 +13,4 @@ def index(request):
     """
     reminders = Reminder.all().filter('user=', request.user)
     return render_to_response(
-        request, 'reminders/reminder_list.html', locals())
+        request, 'reminders/index.html', locals())

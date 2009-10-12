@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 from django.views.generic.list_detail import object_list, object_detail
 
-from models import Reminder
+from reminders.models import Reminder
 
 info_dict = {
     'queryset': Reminder.all(),
@@ -10,6 +10,7 @@ info_dict = {
 
 urlpatterns = patterns('reminders.views',
     url(r'^$', 'index', name='reminder_list'),
-    url(r'^(?P<object_id>[a-z0-9-]+)/$', object_detail, info_dict,
-     name='reminder_detail'),
+    url(r'^(?P<object_id>[a-z0-9-]+)/$', object_detail,
+        dict(info_dict, template_name='reminders/detail.html'),
+        name='reminder_detail'),
 )
