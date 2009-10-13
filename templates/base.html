@@ -23,7 +23,7 @@ lang="{% firstof LANGUAGE_CODE 'en' %}">
 {% block extra-head %}{% endblock %}
 </head>
 
-<body>
+<body class="{{ appname }}">
 <div class="container">
 {% block header %}
 <div id="menu" class="span-14">
