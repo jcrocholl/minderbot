@@ -4,23 +4,18 @@ from reminders.models import Reminder
 from tags.models import Tag
 
 
-def tag_owner(request, tag):
-    tag.owner = request.user
-    tag.put()
+def reminder_owner(reminder, owner):
+    reminder.owner = owner
+    reminder.put()
 
 
-def tag_suggestion_reverse(request, tag, suggestion):
+def tag_suggestion_reverse(tag, suggestion):
     suggestion.tags.append(tag.key().name())
     suggestion.put()
 
 
-def reminder_tag(request, problems):
-    for text, reminder, tag in problems:
-        reminder.tags.append(tag.key().name())
-        reminder.put()
-
-
-def tag_count(request, tag, count, length):
+def tag_suggestion_missing(tag, suggestion_key):
+    tag.suggestions.remove(suggestion_key)
     tag.count = len(tag.suggestions)
     if tag.count:
         tag.put()
@@ -28,21 +23,35 @@ def tag_count(request, tag, count, length):
         tag.delete()
 
 
-def tag_created_none(request, tag, suggestion):
+def reminder_tag(problems):
+    for text, reminder, tag in problems:
+        reminder.tags.append(tag.key().name())
+        reminder.put()
+
+
+def tag_count(tag, count, length):
+    tag.count = len(tag.suggestions)
+    if tag.count:
+        tag.put()
+    else:
+        tag.delete()
+
+
+def tag_created_none(tag, suggestion):
     tag.created = suggestion.created
     tag.put()
 
 
-def tag_created_later(request, tag, suggestion):
+def tag_created_later(tag, suggestion):
     tag.created = suggestion.created
     tag.put()
 
 
-def tag_empty(request, tag):
+def tag_empty(tag):
     tag.delete()
 
 
-def suggestion_tag_missing(request, suggestion, tag_key):
+def suggestion_tag_missing(suggestion, tag_key):
     tag = Tag.get_by_key_name(tag_key)
     if tag is None:
         tag = Tag(key_name=tag_key, count=0, suggestions=[])
@@ -53,7 +62,7 @@ def suggestion_tag_missing(request, suggestion, tag_key):
     tag.put()
 
 
-def suggestion_tag_reverse(request, suggestion, tag):
+def suggestion_tag_reverse(suggestion, tag):
     tag.suggestions.append(suggestion.key().name())
     tag.count = len(tag.suggestions)
     tag.put()

@@ -64,13 +64,13 @@ class AdminTest(TestCase):
         self.assertTrue('class="success"' in response.content)
 
     def test_reminder_owner(self):
-        return
         # Create a reminder with a owner that doesn't exist.
         Reminder(key_name='a-b', title='a b', owner=self.phantom).put()
         # Check that the phantom owner is detected.
         response = self.client.get('/consistency/')
         self.assertTrue('reminder_owner' in response.context['problems'])
-        self.assertTrue("Owner of a-b does not exist." in response.content)
+        self.assertTrue("Reminder a-b references a missing owner."
+                        in response.content)
         # Simulate button click to fix this problem.
         response = self.client.post('/consistency/',
                                     {'reminder_owner': "Claim ownership"})
@@ -79,8 +79,7 @@ class AdminTest(TestCase):
         response = self.client.get('/consistency/')
         self.assertFalse('reminder_owner' in response.context['problems'])
 
-    def test_reminder_missing(self):
-        return
+    def test_tag_suggestion_missing(self):
         self.assertEqual(Tag.all().count(), 0)
         # Create tags but not all suggestions.
         Reminder(key_name='a-b', title='a b', tags='a b'.split()).put()
@@ -89,21 +88,23 @@ class AdminTest(TestCase):
         self.assertEqual(Tag.all().count(), 2)
         # Check that the missing suggestions are detected.
         response = self.client.get('/consistency/')
-        self.assertTrue('reminder_missing' in response.context['problems'])
-        self.assertTrue("Reminder a-c is referenced by a but does not exist."
+        self.assertTrue('tag_suggestion_missing'
+                        in response.context['problems'])
+        self.assertTrue("Tag a references missing suggestion a-c."
                         in response.content)
-        self.assertTrue("Reminder b-c is referenced by b but does not exist."
+        self.assertTrue("Tag b references missing suggestion b-c."
                         in response.content)
         # Simulate button click to fix this problem.
-        response = self.client.post('/consistency/',
-                                    {'reminder_missing': "Create missing"})
+        response = self.client.post('/consistency/', {
+                'tag_suggestion_missing': "Create missing"})
         self.assertRedirects(response, '/consistency/')
         # Check that the references are now gone.
         self.assertEqual(Tag.all().count(), 1)
         self.assertEqual(Tag.get_by_key_name('a').count, 1)
         self.assertEqual(len(Tag.get_by_key_name('a').suggestions), 1)
         response = self.client.get('/consistency/')
-        self.assertFalse('reminder_missing' in response.context['problems'])
+        self.assertFalse('tag_suggestion_missing'
+                         in response.context['problems'])
 
     def test_tag_suggestion_reverse(self):
         # Create a suggestion and a tag.
@@ -217,7 +218,8 @@ class AdminTest(TestCase):
         # Check that the tags are now existing.
         self.assertEqual(Tag.all().count(), 2)
         response = self.client.get('/consistency/')
-        self.assertFalse('tag_missing' in response.context['problems'])
+        self.assertFalse('suggestion_tag_missing'
+                         in response.context['problems'])
 
     def test_suggestion_tag_reverse(self):
         # Create a suggestion and tags but with a missing reverse reference.

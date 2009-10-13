@@ -26,6 +26,8 @@ PROBLEM_MESSAGES = {
 
     'suggestion_tag_missing': "Suggestion %s references missing tag %s.",
     'suggestion_tag_reverse': "Suggestion %s references %s but not reverse.",
+
+    'reminder_owner': "Reminder %s references a missing owner.",
     }
 
 
@@ -80,6 +82,13 @@ def index(request):
             if suggestion.key().name() not in tag.suggestions:
                 problems['suggestion_tag_reverse'].append((suggestion, tag))
 
+    # Check all reminders.
+    for reminder in Reminder.all().filter('owner !=', None):
+        try:
+            owner = reminder.owner # Attempt to dereference.
+        except datastore_errors.Error:
+            problems['reminder_owner'].append((reminder, request.user))
+
     # Remove empty problem sections.
     for problem in PROBLEM_MESSAGES:
         if not problems[problem]:
@@ -107,7 +116,7 @@ def index(request):
                 func = getattr(repair, problem)
                 assert callable(func)
                 for item in problems[problem]:
-                    func(request, *item)
+                    func(*item)
                 return HttpResponseRedirect(request.path)
 
     # Collect errors and remove sections without problems.
@@ -127,15 +136,3 @@ def format_problem(problem, data):
         if hasattr(data[index], 'key'):
             data[index] = data[index].key().name()
     return message % tuple(data[:count])
-
-
-def obsolete():
-    # Check reminders.
-    for reminder in Reminder.all():
-        try:
-            owner = suggestion.owner # Attempt to dereference.
-        except datastore_errors.Error:
-            problems['reminder_owner'].append(
-                ("Owner of %s does not exist.", suggestion))
-
-
