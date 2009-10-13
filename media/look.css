@@ -40,9 +40,9 @@ table.form { width: 44em; }
 table.form th { padding: 0 1em 0 0; }
 table.form td { padding: 0; }
 
-body.welcome ol,
-body.welcome li,
-body.welcome p {
+body.welcome div#content ol,
+body.welcome div#content li,
+body.welcome div#content p {
   font-size: x-large;
   line-height: 1.33;
   margin-bottom: .5em;
