@@ -107,7 +107,6 @@ class AdminTest(TestCase):
         self.assertFalse('reminder_missing' in response.context['problems'])
 
     def test_tag_suggestion_reverse(self):
-        return
         # Create a suggestion and a tag.
         Reminder(key_name='a-b', title='a b', tags='b'.split()).put()
         Tag(key_name='a', count=2, suggestions='a-b a-c'.split()).put()

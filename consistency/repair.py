@@ -9,13 +9,9 @@ def tag_owner(request, tag):
     tag.put()
 
 
-def tag_suggestion_reverse(request, tag, suggestion_key):
-    tag.suggestions.remove(suggestion_key)
-    tag.count = len(tag.suggestions)
-    if tag.count:
-        tag.put()
-    else:
-        tag.delete()
+def tag_suggestion_reverse(request, tag, suggestion):
+    suggestion.tags.append(tag.key().name())
+    suggestion.put()
 
 
 def reminder_tag(request, problems):
