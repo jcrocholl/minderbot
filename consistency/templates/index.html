@@ -8,19 +8,23 @@
 <p>This page checks the consistency of suggestions and tags.
 It is only visible for staff members.</p>
 
-{% for name, class, headline, button, items in consistency_results %}
+{% if consistency_results %}
+{% for name, items in consistency_results %}
 <div class="span-17 last">
-<h2 class="{{ class }}">{{ headline }}</h2>
+<h2 class="error">{{ name }}</h2>
 <ul>
 {% for item in items %}<li>{{ item }}</li>
 {% endfor %}
 </ul>
-{% ifequal class "error" %}
 <form action="" method="post">
-<p><input type="submit" name="{{ name }}" value="{{ button }}" /></p>
+<p><input type="submit" name="{{ name }}" value="{{ name }}" /></p>
 </form>
-{% endifequal %}
 </div>
 {% endfor %}
+{% else %}
+<div class="span-17 last">
+<h2 class="success">No problems found.</h2>
+</div>
+{% endif %}
 
 {% endblock %}

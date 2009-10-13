@@ -4,53 +4,44 @@ from reminders.models import Reminder
 from tags.models import Tag
 
 
-def save_tag(tag):
-    if tag.count:
-        tag.put()
-    else:
-        tag.delete()
+def tag_owner(request, tag):
+    tag.owner = request.user
+    tag.put()
 
 
-def reminder_owner(request, problems):
-    for text, reminder in problems:
-        reminder.owner = request.user
-        reminder.put()
-    return HttpResponseRedirect(request.path)
-
-
-def reminder_missing(request, problems):
+def suggestion(request, problems):
     for text, reminder_name, tag in problems:
         tag.reminders.remove(reminder_name)
         tag.count = len(tag.reminders)
         save_tag(tag)
-    return HttpResponseRedirect(request.path)
 
 
 def reminder_tag(request, problems):
     for text, reminder, tag in problems:
         reminder.tags.append(tag.key().name())
         reminder.put()
-    return HttpResponseRedirect(request.path)
 
 
-def tag_count(request, problems):
-    for text, tag, count, length in problems:
-        tag.count = len(tag.reminders)
-        save_tag(tag)
-    return HttpResponseRedirect(request.path)
+def tag_count(request, tag, count, length):
+    tag.count = len(tag.suggestions)
+    if tag.count:
+        tag.put()
+    else:
+        tag.delete()
 
 
-def tag_created(request, problems):
-    for text, tag, reminder in problems:
-        tag.created = reminder.created
-        save_tag(tag)
-    return HttpResponseRedirect(request.path)
+def tag_created_none(request, tag, suggestion):
+    tag.created = suggestion.created
+    tag.put()
 
 
-def tag_empty(request, problems):
-    for text, tag in problems:
-        save_tag(tag)
-    return HttpResponseRedirect(request.path)
+def tag_created_later(request, tag, suggestion):
+    tag.created = suggestion.created
+    tag.put()
+
+
+def tag_empty(request, tag):
+    tag.delete()
 
 
 def tag_missing(request, problems):
@@ -69,7 +60,6 @@ def tag_missing(request, problems):
                   reminders=reminder_names,
                   created=created)
         tag.put()
-    return HttpResponseRedirect(request.path)
 
 
 def tag_reminder(request, problems):
@@ -77,4 +67,3 @@ def tag_reminder(request, problems):
         tag.reminders.append(reminder.key().name())
         tag.count = len(tag.reminders)
         save_tag(tag)
-    return HttpResponseRedirect(request.path)
