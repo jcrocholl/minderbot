@@ -31,13 +31,27 @@ class NotAdminTest(TestCase):
 
 class CronTest(TestCase):
 
-    def test_cron(self):
+    def test_okay(self):
         response = self.client.get('/consistency/',
                                    HTTP_X_APPENGINE_CRON='true')
         self.failUnlessEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'text/plain')
-        self.assertTrue('http://' in response.content)
-        self.assertTrue('/consistency/' in response.content)
+        self.assertTrue("No problems found." in response.content)
+        self.assertTrue('http://www.minderbot.com/consistency/'
+                        in response.content)
+
+    def test_problem(self):
+        Tag(key_name='a', count=1, suggestions=['a-b']).put()
+        response = self.client.get('/consistency/',
+                                   HTTP_X_APPENGINE_CRON='true')
+        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/plain')
+        self.assertTrue("References to missing suggestions"
+                        in response.content)
+        self.assertTrue("Tag a references missing suggestion a-b."
+                        in response.content)
+        self.assertTrue('http://www.minderbot.com/consistency/'
+                        in response.content)
 
 
 class AdminTest(TestCase):

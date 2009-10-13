@@ -118,14 +118,20 @@ def index(request):
         if not problems[problem]:
             assert problems.pop(problem) == []
 
-    # Return plain-text summary if cron is calling.
+    # Return plain-text summary if cron is calling, development test with:
+    # curl --header "X-AppEngine-Cron: true" http://localhost:8000/consistency/
     if request.META.get('HTTP_X_APPENGINE_CRON', '') == 'true':
         message = []
         for problem in problems:
+            message.append(PROBLEM_HEADLINES[problem].rstrip('.') + ':')
             for data in problems[problem]:
                 message.append("* " + format_problem(problem, data))
             message.append('')
-        message.append('http://minderbot.appspot.com/consistency/')
+        if not message:
+            message.append("No problems found.")
+            message.append('')
+        message.append('http://www.minderbot.com/consistency/')
+        message.append('')
         message = '\n'.join(message)
         if problems:
             logging.error(message)
