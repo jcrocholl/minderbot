@@ -9,5 +9,5 @@ handler500 = 'ragendja.views.server_error'
 
 urlpatterns = patterns('',
     ('^admin/(.*)', admin.site.root),
-    (r'^$', 'welcome.views.index'),
+    (r'^$', 'pages.views.page', {'page_name': 'welcome'}),
 ) + urlpatterns
