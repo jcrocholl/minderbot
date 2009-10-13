@@ -3,13 +3,22 @@
 {% block title %}Welcome{% endblock %}
 
 {% block content %}
-<h1>Welcome to Minderbot</h1>
+<div id="welcome">
+  <h1>Welcome to Minderbot</h1>
 
-<p>Do you want a reminder email to
-<a href="/suggestions/replace-smoke-alarm-batteries/">replace your
-smoke alarm batteries</a> every year?</p>
+  <p>Do you want a reminder email to
+  <a href="/suggestions/replace-smoke-alarm-batteries/">replace your
+  smoke alarm batteries</a> every year?</p>
 
-<p>Do you have a <a href="/tags/car/">car</a> or a
-<a href="/tags/home/">home</a> that needs regular maintenance?</p>
+  <p>Do you have a <a href="/tags/car/">car</a> or a
+  <a href="/tags/home/">home</a> that needs regular maintenance?</p>
 
+  <p><strong>We can help!</strong></p>
+
+  <ol>
+    <li>Look for suggestions by <a href="/tags/">tag</a>.</li>
+    <li>Choose from our lists of things to remember, or create your own.</li>
+    <li>We'll send you reminders by email at the times you choose.</li>
+  </ol>
+</div>
 {% endblock %}
