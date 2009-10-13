@@ -1,4 +1,3 @@
-import pprint
 import logging
 from datetime import datetime, timedelta
 
@@ -24,6 +23,9 @@ PROBLEM_MESSAGES = {
     'tag_created_later': "Tag %s was created after suggestion %s.",
     'tag_suggestion_missing': "Tag %s references missing suggestion %s.",
     'tag_suggestion_reverse': "Tag %s references %s but not reverse.",
+
+    'suggestion_tag_missing': "Suggestion %s references missing tag %s.",
+    'suggestion_tag_reverse': "Suggestion %s references %s but not reverse.",
     }
 
 
@@ -67,6 +69,17 @@ def index(request):
             elif tag.created > oldest.created:
                 problems['tag_created_later'].append((tag, oldest))
 
+    # Check all suggestions.
+    for suggestion_key, suggestion in suggestion_dict.items():
+        for tag_key in suggestion.tags:
+            if tag_key not in tag_dict:
+                problems['suggestion_tag_missing'].append(
+                    (suggestion, tag_key))
+                continue
+            tag = tag_dict[tag_key]
+            if suggestion.key().name() not in tag.suggestions:
+                problems['suggestion_tag_reverse'].append((suggestion, tag))
+
     # Fix inconsistencies if admin clicked one of the buttons.
     if request.user.is_staff:
         for problem in problems:
@@ -108,19 +121,6 @@ def obsolete():
             problems['reminder_owner'].append(
                 ("Owner of %s does not exist.", suggestion))
 
-    # Check for missing tags or missing references to suggestions.
-    for suggestion in suggestion_list:
-        for tag in suggestion.tags:
-            if tag not in tag_dict:
-                problems['tag_missing'].append(
-                    ("Tag %s is referenced by %s but does not exist.",
-                     tag, suggestion))
-                continue
-            tag = tag_dict[tag]
-            if suggestion.key().name() not in tag.suggestions:
-                problems['tag_suggestion'].append(
-                    ("Tag %s does not reverse reference %s.",
-                     tag, suggestion))
 
     if request.META.get('HTTP_X_APPENGINE_CRON', '') == 'true':
         message = []

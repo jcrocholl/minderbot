@@ -9,11 +9,13 @@ def tag_owner(request, tag):
     tag.put()
 
 
-def suggestion(request, problems):
-    for text, reminder_name, tag in problems:
-        tag.reminders.remove(reminder_name)
-        tag.count = len(tag.reminders)
-        save_tag(tag)
+def tag_suggestion_reverse(request, tag, suggestion_key):
+    tag.suggestions.remove(suggestion_key)
+    tag.count = len(tag.suggestions)
+    if tag.count:
+        tag.put()
+    else:
+        tag.delete()
 
 
 def reminder_tag(request, problems):
@@ -44,26 +46,18 @@ def tag_empty(request, tag):
     tag.delete()
 
 
-def tag_missing(request, problems):
-    problems.sort(key=lambda triple: triple[1])
-    while problems:
-        text, tag_name, reminder = problems.pop(0)
-        created = reminder.created
-        reminder_names = [reminder.key().name()]
-        while problems and problems[0][1] == tag_name:
-            text, tag_name, reminder = problems.pop(0)
-            reminder_names.append(reminder.key().name())
-            if reminder.created < created:
-                created = reminder.created
-        tag = Tag(key_name=tag_name,
-                  count=len(reminder_names),
-                  reminders=reminder_names,
-                  created=created)
-        tag.put()
+def suggestion_tag_missing(request, suggestion, tag_key):
+    tag = Tag.get_by_key_name(tag_key)
+    if tag is None:
+        tag = Tag(key_name=tag_key, count=0, suggestions=[])
+    tag.suggestions.append(suggestion.key().name())
+    tag.count = len(tag.suggestions)
+    if tag.created is None or suggestion.created < tag.created:
+        tag.created = suggestion.created
+    tag.put()
 
 
-def tag_reminder(request, problems):
-    for text, tag, reminder in problems:
-        tag.reminders.append(reminder.key().name())
-        tag.count = len(tag.reminders)
-        save_tag(tag)
+def suggestion_tag_reverse(request, suggestion, tag):
+    tag.suggestions.append(suggestion.key().name())
+    tag.count = len(tag.suggestions)
+    tag.put()
