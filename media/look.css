@@ -5,6 +5,11 @@ h2 {
   line-height: 36px;
   margin-bottom: 0;
 }
+h2.error, h2.success {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0.4em;
+}
 
 p,th,td,li {
   font-size: 14px;

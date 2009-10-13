@@ -9,15 +9,15 @@
 It is only visible for staff members.</p>
 
 {% if consistency_results %}
-{% for name, items in consistency_results %}
+{% for name, headline, items, button in consistency_results %}
 <div class="span-17 last">
-<h2 class="error">{{ name }}</h2>
+<h2 class="error">{{ headline }}</h2>
 <ul>
 {% for item in items %}<li>{{ item }}</li>
 {% endfor %}
 </ul>
 <form action="" method="post">
-<p><input type="submit" name="{{ name }}" value="{{ name }}" /></p>
+<p><input type="submit" name="{{ name }}" value="{{ button }}" /></p>
 </form>
 </div>
 {% endfor %}

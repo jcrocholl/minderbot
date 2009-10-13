@@ -17,17 +17,41 @@ from feedback.models import Feedback
 from consistency import repair
 
 PROBLEM_MESSAGES = {
-    'tag_count': "Tag %s has count %d but references %d suggestions.",
-    'tag_empty': "Tag %s does not reference any suggestions.",
-    'tag_created_none': "Tag %s is missing a timestamp.",
-    'tag_created_later': "Tag %s was created after suggestion %s.",
-    'tag_suggestion_missing': "Tag %s references missing suggestion %s.",
-    'tag_suggestion_reverse': "Tag %s references %s but not reverse.",
-
+    'reminder_owner': "Reminder %s references a missing owner.",
     'suggestion_tag_missing': "Suggestion %s references missing tag %s.",
     'suggestion_tag_reverse': "Suggestion %s references %s but not reverse.",
+    'tag_count': "Tag %s has count %d but references %d suggestions.",
+    'tag_created_later': "Tag %s was created after suggestion %s.",
+    'tag_created_none': "Tag %s is missing a timestamp.",
+    'tag_empty': "Tag %s does not reference any suggestions.",
+    'tag_suggestion_missing': "Tag %s references missing suggestion %s.",
+    'tag_suggestion_reverse': "Tag %s references %s but not reverse.",
+    }
 
-    'reminder_owner': "Reminder %s references a missing owner.",
+
+PROBLEM_HEADLINES = {
+    'reminder_owner': "Missing owners",
+    'suggestion_tag_missing': "References to missing tags",
+    'suggestion_tag_reverse': "Missing reverse references",
+    'tag_count': "Incorrect count fields",
+    'tag_created_later': "Incorrect tag timestamps",
+    'tag_created_none': "Missing tag timestamps",
+    'tag_empty': "Empty tags",
+    'tag_suggestion_missing': "References to missing suggestions",
+    'tag_suggestion_reverse': "Missing reverse references",
+    }
+
+
+PROBLEM_BUTTONS = {
+    'reminder_owner': "Claim ownership",
+    'suggestion_tag_missing': "Create missing tags",
+    'suggestion_tag_reverse': "Create missing reference",
+    'tag_count': "Adjust count fields",
+    'tag_created_later': "Adjust timestamps",
+    'tag_created_none': "Adjust timestamps",
+    'tag_empty': "Delete empty tags",
+    'tag_suggestion_missing': "Delete dangling references",
+    'tag_suggestion_reverse': "Create missing references",
     }
 
 
@@ -122,8 +146,11 @@ def index(request):
     # Collect errors and remove sections without problems.
     consistency_results = []
     for problem in problems:
-        consistency_results.append((problem,
-             [format_problem(problem, item) for item in problems[problem]]))
+        consistency_results.append(
+            (problem,
+             PROBLEM_HEADLINES[problem],
+             [format_problem(problem, item) for item in problems[problem]],
+             PROBLEM_BUTTONS[problem]))
     consistency_results.sort()
     return render_to_response(request, 'consistency/index.html', locals())
 
