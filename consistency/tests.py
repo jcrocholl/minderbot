@@ -35,7 +35,6 @@ class CronTest(TestCase):
         response = self.client.get('/consistency/',
                                    HTTP_X_APPENGINE_CRON='true')
         self.failUnlessEqual(response.status_code, 200)
-        return
         self.assertEqual(response['Content-Type'], 'text/plain')
         self.assertTrue('http://' in response.content)
         self.assertTrue('/consistency/' in response.content)

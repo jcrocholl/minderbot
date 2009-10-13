@@ -80,6 +80,26 @@ def index(request):
             if suggestion.key().name() not in tag.suggestions:
                 problems['suggestion_tag_reverse'].append((suggestion, tag))
 
+    # Remove empty problem sections.
+    for problem in PROBLEM_MESSAGES:
+        if not problems[problem]:
+            assert problems.pop(problem) == []
+
+    # Return plain-text summary if cron is calling.
+    if request.META.get('HTTP_X_APPENGINE_CRON', '') == 'true':
+        message = []
+        for problem in problems:
+            for data in problems[problem]:
+                message.append("* " + format_problem(problem, data))
+            message.append('')
+        message.append('http://minderbot.appspot.com/consistency/')
+        message = '\n'.join(message)
+        if problems:
+            logging.error(message)
+            mail_admins('Consistency check found problems',
+                        message, fail_silently=True)
+        return HttpResponse(message, mimetype="text/plain")
+
     # Fix inconsistencies if admin clicked one of the buttons.
     if request.user.is_staff:
         for problem in problems:
@@ -92,10 +112,7 @@ def index(request):
 
     # Collect errors and remove sections without problems.
     consistency_results = []
-    for problem in PROBLEM_MESSAGES:
-        if not problems[problem]:
-            assert problems.pop(problem) == []
-            continue
+    for problem in problems:
         consistency_results.append((problem,
              [format_problem(problem, item) for item in problems[problem]]))
     consistency_results.sort()
@@ -121,19 +138,4 @@ def obsolete():
             problems['reminder_owner'].append(
                 ("Owner of %s does not exist.", suggestion))
 
-
-    if request.META.get('HTTP_X_APPENGINE_CRON', '') == 'true':
-        message = []
-        for name in problems:
-            message.append(PROBLEM_MESSAGES[name][1].rstrip('.') + ':')
-            for problem in problems[name]:
-                message.append("* " + format_problem(problem))
-            message.append('')
-        message.append('http://minderbot.appspot.com/consistency/')
-        message = '\n'.join(message)
-        if problems:
-            logging.error(message)
-            mail_admins('Consistency check found problems',
-                        message, fail_silently=True)
-        return HttpResponse(message, mimetype="text/plain")
 
