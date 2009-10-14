@@ -1,11 +1,15 @@
 from django.http import HttpResponseRedirect
 
-from reminders.models import Reminder
 from tags.models import Tag
 
 
-def reminder_owner(reminder, owner):
-    reminder.owner = owner
+def feedback_submitter(feedback, request_user):
+    feedback.submitter = None
+    feedback.put()
+
+
+def reminder_owner(reminder, request_user):
+    reminder.owner = request_user
     reminder.put()
 
 

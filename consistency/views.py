@@ -17,6 +17,7 @@ from feedback.models import Feedback
 from consistency import repair
 
 PROBLEM_MESSAGES = {
+    'feedback_submitter': "Feedback %s references a missing submitter.",
     'reminder_owner': "Reminder %s references a missing owner.",
     'suggestion_tag_missing': "Suggestion %s references missing tag %s.",
     'suggestion_tag_reverse': "Suggestion %s references %s but not reverse.",
@@ -30,6 +31,7 @@ PROBLEM_MESSAGES = {
 
 
 PROBLEM_HEADLINES = {
+    'feedback_submitter': "Missing submitters",
     'reminder_owner': "Missing owners",
     'suggestion_tag_missing': "References to missing tags",
     'suggestion_tag_reverse': "Missing reverse references",
@@ -43,6 +45,7 @@ PROBLEM_HEADLINES = {
 
 
 PROBLEM_BUTTONS = {
+    'feedback_submitter': "Reset to anonymous",
     'reminder_owner': "Claim ownership",
     'suggestion_tag_missing': "Create missing tags",
     'suggestion_tag_reverse': "Create missing reference",
@@ -106,6 +109,13 @@ def index(request):
             if suggestion.key().name() not in tag.suggestions:
                 problems['suggestion_tag_reverse'].append((suggestion, tag))
 
+    # Check all feedback submitters.
+    for feedback in Feedback.all().filter('submitter !=', None):
+        try:
+            submitter = feedback.submitter # Attempt to dereference.
+        except datastore_errors.Error:
+            problems['feedback_submitter'].append((feedback, request.user))
+
     # Check all reminders.
     for reminder in Reminder.all().filter('owner !=', None):
         try:
@@ -167,6 +177,11 @@ def format_problem(problem, data):
     count = message.count('%')
     data = list(data)
     for index in range(count):
-        if hasattr(data[index], 'key'):
-            data[index] = data[index].key().name()
-    return message % tuple(data[:count])
+        if hasattr(data[index], 'key') and callable(data[index].key):
+            key = data[index].key()
+            if hasattr(key, 'name') and callable(key.name):
+                name = key.name()
+                if name:
+                    data[index] = name
+    arguments = tuple(data[:count])
+    return message % arguments

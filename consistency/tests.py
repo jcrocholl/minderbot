@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.test import TestCase
 from django.contrib.auth.models import User
 
+from feedback.models import Feedback
 from reminders.models import Reminder
 from tags.models import Tag
 
@@ -78,10 +79,26 @@ class AdminTest(TestCase):
         self.assertFalse('class="error"' in response.content)
         self.assertTrue('class="success"' in response.content)
 
+    def test_feedback_submitter(self):
+        # Create a feedback with a submitter that doesn't exist.
+        Feedback(message='foo', page='/', submitter=self.phantom).put()
+        # Check that the missing submitter is detected.
+        response = self.client.get('/consistency/')
+        self.assertTrue('feedback_submitter' in response.context['problems'])
+        self.assertTrue("Feedback foo references a missing submitter."
+                        in response.content)
+        # Simulate button click to fix this problem.
+        response = self.client.post('/consistency/',
+                                    {'feedback_submitter': "Make anonymous"})
+        self.assertRedirects(response, '/consistency/')
+        # Check that the tags are now existing.
+        response = self.client.get('/consistency/')
+        self.assertFalse('feedback_submitter' in response.context['problems'])
+
     def test_reminder_owner(self):
         # Create a reminder with a owner that doesn't exist.
         Reminder(key_name='a-b', title='a b', owner=self.phantom).put()
-        # Check that the phantom owner is detected.
+        # Check that the missing owner is detected.
         response = self.client.get('/consistency/')
         self.assertTrue('reminder_owner' in response.context['problems'])
         self.assertTrue("Reminder a-b references a missing owner."
