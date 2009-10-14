@@ -52,11 +52,13 @@ def index(request):
     week = datetime.now() - timedelta(days=7)
 
     # Show newest suggestions.
-    suggestions = Reminder.all().filter('owner', None)
-    suggestion_count = suggestions.count()
-    suggestion_count_24h = suggestions.filter('created >', day).count()
-    suggestion_count_7d = suggestions.filter('created >', week).count()
-    suggestion_list = suggestions.order('-created').fetch(RECENT_LIMIT)
+    suggestion_count = Reminder.all().filter('owner', None).count()
+    suggestion_count_24h = (Reminder.all().filter('owner', None)
+                            .filter('created >', day).count())
+    suggestion_count_7d = (Reminder.all().filter('owner', None)
+                           .filter('created >', week).count())
+    suggestion_list = (Reminder.all().filter('owner', None)
+                       .order('-created').fetch(RECENT_LIMIT))
 
     # Show newest tags.
     tag_count = Tag.all().count()
