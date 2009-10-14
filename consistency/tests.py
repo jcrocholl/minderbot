@@ -43,6 +43,7 @@ class CronTest(TestCase):
     def test_problem(self):
         Tag(key_name='a', count=1, suggestions=['a-b']).put()
         response = self.client.get('/consistency/',
+                                   HTTP_USER_AGENT='django.test.Client',
                                    HTTP_X_APPENGINE_CRON='true')
         self.failUnlessEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'text/plain')

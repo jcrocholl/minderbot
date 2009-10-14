@@ -134,7 +134,8 @@ def index(request):
         message.append('')
         message = '\n'.join(message)
         if problems:
-            logging.error(message)
+            if request.META.get('HTTP_USER_AGENT', '') != 'django.test.Client':
+                logging.error(message)
             mail_admins('Consistency check found problems',
                         message, fail_silently=True)
         return HttpResponse(message, mimetype="text/plain")
