@@ -23,8 +23,8 @@ class Reminder(db.Model):
     years = db.IntegerProperty()
     miles = db.IntegerProperty()
     kilometers = db.IntegerProperty()
-    next = db.DateTimeProperty()
     previous = db.DateTimeProperty()
+    next = db.DateTimeProperty()
     created = db.DateTimeProperty(auto_now_add=True)
 
     def __unicode__(self):
