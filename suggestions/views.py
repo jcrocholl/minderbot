@@ -27,12 +27,15 @@ class ReminderForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'text span-2'}))
     kilometers = forms.IntegerField(required=False,
         widget=forms.TextInput(attrs={'class': 'text span-2'}))
-    email = forms.EmailField(max_length=200,
-        widget=forms.TextInput(attrs={'class': 'text span-6'}))
 
     class Meta:
         model = Reminder
         exclude = 'owner previous next created'.split()
+
+
+class EmailForm(forms.Form):
+    email = forms.EmailField(max_length=200,
+        widget=forms.TextInput(attrs={'class': 'text span-6'}))
 
 
 def detail(request, object_id):
@@ -40,31 +43,46 @@ def detail(request, object_id):
     List all reminders for a registered user.
     """
     suggestion = get_object_or_404(Reminder, key_name=object_id)
-    reminder_form = ReminderForm(request.POST or None, instance=suggestion)
+    reminder_form = ReminderForm(request.POST or None, initial={
+            'title': suggestion.title,
+            'tags': ' '.join(suggestion.tags),
+            'days': suggestion.days,
+            'months': suggestion.months,
+            'years': suggestion.years,
+            'miles': suggestion.miles,
+            'kilometers': suggestion.kilometers,
+            })
+    email_form = EmailForm(request.POST or None)
     if reminder_form.is_valid():
-        email = reminder_form.cleaned_data['email']
-        existing = User.all().filter('email', email).fetch(1)
-        if len(existing):
-            return HttpResponseRedirect(
-                '/accounts/login/?email=%s&next=%s' %
-                (email, request.path))
-        create_reminder(request, reminder_form)
+        user = request.user
+        if user.is_anonymous() and email_form.is_valid():
+            email = email_form.cleaned_data['email']
+            existing = User.all().filter('email', email).fetch(1)
+            if len(existing):
+                return HttpResponseRedirect(
+                    '/accounts/login/?email=%s&next=%s' %
+                    (email, request.path))
+            user = create_user(request, email)
+        if user.is_authenticated():
+            return create_reminder(request, user, reminder_form)
     return render_to_response(
         request, 'suggestions/detail.html', locals())
 
 
-def create_reminder(request, reminder_form):
-    user = request.user
-    if user.is_anonymous:
-        user = create_user(request, reminder_form.cleaned_data['email'])
+def create_reminder(request, user, reminder_form):
     reminder = reminder_form.save(commit=False)
     reminder.owner = user
     reminder.tags = reminder_form.cleaned_data['tags'].split()
     reminder.put()
+    return HttpResponseRedirect('/reminders/')
 
 
 def create_user(request, email):
     password = generate_password(digits=1)
+    User.objects.create_user(email, email, password)
+    user = authenticate(username=email, password=password)
+    assert user
+    login(request, user)
     send_mail("Welcome to Minderbot", """\
 We have created a user account on www.minderbot.com for you.
 If you have not requested reminders for this email address,
@@ -76,8 +94,4 @@ You can login with this password: %(password)s
 Thank you for using Minderbot!
 """ % locals(), settings.DEFAULT_FROM_EMAIL, [email],
 fail_silently=True)
-    User.objects.create_user(email, email, password)
-    user = authenticate(username=email, password=password)
-    assert user
-    login(request, user)
     return user

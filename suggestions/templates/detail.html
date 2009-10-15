@@ -16,7 +16,12 @@
 </td></tr>
 <tr><td>Tags:</td><td>{{ reminder_form.tags }}</td></tr>
 {% if request.user.is_anonymous %}
-<tr><td>Email:</td><td>{{ reminder_form.email }}</td></tr>
+<tr><td>Email:</td><td>{{ email_form.email }}</td></tr>
+{% else %}
+<tr>
+<td></td>
+<td><input type="hidden" name="email" value="{{ request.user.email }}" /></td>
+</tr>
 {% endif %}
 <tr><td></td>
 <td><input type="submit" value="Create a reminder" id="button" /></td>
