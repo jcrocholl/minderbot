@@ -11,6 +11,6 @@ def index(request):
     """
     List all reminders for a registered user.
     """
-    reminders = Reminder.all().filter('user=', request.user)
+    reminder_list = Reminder.all().filter('owner', request.user)
     return render_to_response(
         request, 'reminders/index.html', locals())
