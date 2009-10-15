@@ -40,15 +40,15 @@ body.welcome div#content p {
   margin-bottom: .5em;
 }
 
-h1 input.text {
+input.h1 {
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-  font-size: 100%;
+  font-size: 3em;
   line-height: 1;
   position: relative;
   top: -10px;
 }
 
-h1 input.text,
+input.h1,
 td input.text {
   margin-top: 0;
   margin-bottom: 0;

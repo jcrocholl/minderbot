@@ -4,10 +4,16 @@
 
 {% block content %}
 <form action="" method="post">
-<h1>{{ reminder_form.title }}</h1>
+<div>{{ reminder_form.title }}</div>
 
 <table>
-<tr><td>Every</td><td>{{ reminder_form.interval }}</td></tr>
+<tr><td>Every</td><td>
+{{ reminder_form.days }} days or
+{{ reminder_form.months }} months or
+{{ reminder_form.years }} years or
+{{ reminder_form.miles }} miles or
+{{ reminder_form.kilometers }} kilometers
+</td></tr>
 <tr><td>Tags:</td><td>{{ reminder_form.tags }}</td></tr>
 {% if request.user.is_anonymous %}
 <tr><td>Email:</td><td>{{ reminder_form.email }}</td></tr>
