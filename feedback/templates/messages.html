@@ -11,7 +11,7 @@ name="vote" value="{{ feedback.key.id }}" class="image16x16" />
 <input type="image" alt="delete" src="/static/images/delete.png"
 name="delete" value="{{ feedback.key.id }}" class="image16x16" />
 {% endif %}<br />
-<span class="lightgray">
+<span class="quiet">
 {{ feedback.points }} points
 {% if feedback.submitter %}by {{ feedback.submitter }}{% endif %}
 {{ feedback.submitted|timesince }} ago
