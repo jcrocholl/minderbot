@@ -8,11 +8,9 @@ info_dict = {
     'template_object_name': 'suggestion',
 }
 
-urlpatterns = patterns('',
+urlpatterns = patterns('suggestions.views',
     url(r'^$', object_list,
         dict(info_dict, template_name='suggestions/index.html'),
         name='suggestion_list'),
-    url(r'^(?P<object_id>[a-z0-9-]+)/$', object_detail,
-        dict(info_dict, template_name='suggestions/detail.html'),
-        name='suggestion_detail'),
+    url(r'^(?P<object_id>[a-z0-9-]+)/$', 'detail', name='suggestion_detail'),
 )
