@@ -32,9 +32,9 @@ class SuggestionForm(forms.Form):
     years = forms.IntegerField(required=False,
         widget=forms.TextInput(attrs={'class': 'text span-1'}))
     miles = forms.IntegerField(required=False,
-        widget=forms.TextInput(attrs={'class': 'text span-1'}))
+        widget=forms.TextInput(attrs={'class': 'text span-2'}))
     kilometers = forms.IntegerField(required=False,
-        widget=forms.TextInput(attrs={'class': 'text span-1'}))
+        widget=forms.TextInput(attrs={'class': 'text span-2'}))
 
 
 @staff_only
