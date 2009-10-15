@@ -36,6 +36,8 @@ def login(request):
             # Don't allow absolute URLs for redirect target.
             next = settings.LOGIN_REDIRECT_URL
         return HttpResponseRedirect(next)
+    if not request.POST:
+        login_form.fields['email'].initial = request.GET.get('email', '')
     if login_form.errors.get('__all__', False):
         login_error = login_form.errors['__all__'][0]
     return render_to_response(request, 'accounts/login.html', locals())
