@@ -33,7 +33,7 @@ class Reminder(db.Model):
     def get_absolute_url(self):
         if self.owner:
             return reverse('reminder_detail',
-                           kwargs={'object_id': self.key().name()})
+                           kwargs={'object_id': self.key().id()})
         else:
             return reverse('suggestion_detail',
                            kwargs={'object_id': self.key().name()})

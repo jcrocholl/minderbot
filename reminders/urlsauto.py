@@ -10,7 +10,7 @@ info_dict = {
 
 urlpatterns = patterns('reminders.views',
     url(r'^$', 'index', name='reminder_list'),
-    url(r'^(?P<object_id>[a-z0-9-]+)/$', object_detail,
+    url(r'^(?P<object_id>\d+)/$', object_detail,
         dict(info_dict, template_name='reminders/detail.html'),
         name='reminder_detail'),
 )
