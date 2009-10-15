@@ -27,6 +27,7 @@ PROBLEM_MESSAGES = {
     'tag_empty': "Tag %s does not reference any suggestions.",
     'tag_suggestion_missing': "Tag %s references missing suggestion %s.",
     'tag_suggestion_reverse': "Tag %s references %s but not reverse.",
+    'tag_suggestion_duplicate': "Tag %s has %d references for %s.",
     }
 
 
@@ -41,6 +42,7 @@ PROBLEM_HEADLINES = {
     'tag_empty': "Empty tags",
     'tag_suggestion_missing': "References to missing suggestions",
     'tag_suggestion_reverse': "Missing reverse references",
+    'tag_suggestion_duplicate': "Duplicate tag-suggestions references",
     }
 
 
@@ -48,13 +50,14 @@ PROBLEM_BUTTONS = {
     'feedback_submitter': "Reset to anonymous",
     'reminder_owner': "Claim ownership",
     'suggestion_tag_missing': "Create missing tags",
-    'suggestion_tag_reverse': "Create missing reference",
+    'suggestion_tag_reverse': "Create missing references",
     'tag_count': "Adjust count fields",
     'tag_created_later': "Adjust timestamps",
     'tag_created_none': "Adjust timestamps",
     'tag_empty': "Delete empty tags",
     'tag_suggestion_missing': "Delete dangling references",
     'tag_suggestion_reverse': "Create missing references",
+    'tag_suggestion_duplicate': "Delete duplicate references",
     }
 
 
@@ -83,6 +86,10 @@ def index(request):
             problems['tag_empty'].append((tag, ))
         oldest = None
         for suggestion_key in tag.suggestions:
+            if tag.suggestions.count(suggestion_key) > 1:
+                problems['tag_suggestion_duplicate'].append(
+                    (tag, tag.suggestions.count(suggestion_key),
+                     suggestion_key))
             if suggestion_key not in suggestion_dict:
                 problems['tag_suggestion_missing'].append(
                     (tag, suggestion_key))
@@ -179,9 +186,7 @@ def format_problem(problem, data):
     for index in range(count):
         if hasattr(data[index], 'key') and callable(data[index].key):
             key = data[index].key()
-            if hasattr(key, 'name') and callable(key.name):
-                name = key.name()
-                if name:
-                    data[index] = name
+            if hasattr(key, 'id_or_name') and callable(key.id_or_name):
+                data[index] = str(key.id_or_name())
     arguments = tuple(data[:count])
     return message % arguments

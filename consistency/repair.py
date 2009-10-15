@@ -27,6 +27,13 @@ def tag_suggestion_missing(tag, suggestion_key):
         tag.delete()
 
 
+def tag_suggestion_duplicate(tag, count, suggestion_key):
+    while tag.suggestions.count(suggestion_key) > 1:
+        tag.suggestions.remove(suggestion_key)
+    tag.count = len(tag.suggestions)
+    tag.put()
+
+
 def reminder_tag(problems):
     for text, reminder, tag in problems:
         reminder.tags.append(tag.key().name())
@@ -67,6 +74,8 @@ def suggestion_tag_missing(suggestion, tag_key):
 
 
 def suggestion_tag_reverse(suggestion, tag):
+    if suggestion.key().name() is None:
+        return
     tag.suggestions.append(suggestion.key().name())
     tag.count = len(tag.suggestions)
     tag.put()
