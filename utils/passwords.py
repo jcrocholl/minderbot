@@ -18,32 +18,30 @@ def find_consonant_matches(consonants, choices):
             and (len(choice) == count or choice[count] in VOWELS)]
 
 
-def generate_password():
+def generate_password(digits=0):
     choice = random.choice(START_VOWEL)
     consonants, vowels = cv_match(choice).groups()
     parts = [consonants]
-    matches = find_vowel_matches(vowels, VOWEL_CONSONANT)
-    # print parts, choice, consonants, vowels, matches
+    # print parts, choice, consonants, vowels
 
+    matches = find_vowel_matches(vowels, VOWEL_CONSONANT)
     choice = random.choice(matches)
     vowels, consonants = vc_match(choice).groups()
     parts.append(vowels)
-    matches = find_consonant_matches(consonants, CONSONANT_VOWEL)
-    # print parts, choice, vowels, consonants, matches
+    # print parts, choice, vowels, consonants
 
+    matches = find_consonant_matches(consonants, CONSONANT_VOWEL)
     choice = random.choice(matches)
     consonants, vowels = cv_match(choice).groups()
     parts.append(consonants)
+    # print parts, choice, consonants, vowels
+
     matches = find_vowel_matches(vowels, VOWEL_END)
-    # print parts, choice, consonants, vowels, matches
-
     parts.append(random.choice(matches))
+    for d in range(digits):
+        parts.append(random.choice('23456789'))
+    # print parts
     return ''.join(parts)
-
-
-def generate_password_plus_digit():
-    return generate_password() + random.choice('23456789')
-
 
 
 START_VOWEL = """
