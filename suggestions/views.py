@@ -9,7 +9,7 @@ from reminders.models import Reminder
 
 class ReminderForm(forms.Form):
     title = forms.CharField(max_length=100,
-        widget=forms.TextInput(attrs={'class': 'text span-17 h1'}))
+        widget=forms.TextInput(attrs={'class': 'text span-17'}))
     interval = forms.CharField(max_length=100,
         widget=forms.TextInput(attrs={'class': 'text span-5'}))
     tags = forms.CharField(max_length=200,

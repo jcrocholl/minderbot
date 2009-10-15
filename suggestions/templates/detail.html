@@ -1,62 +1,20 @@
 {% extends "base.html" %}
 
-{% block extra-head %}
-<script type="text/javascript">
-$(document).ready(function() {
-  $(".edit").toggleClass("invisible");
-  $(".email").hide();
-  $("input#button").click( function() {
-    if ($(".edit").hasClass("invisible")) {
-      $(".view").toggle();
-      $(".edit").toggleClass("invisible");
-      $(".email").toggle();
-      return false;
-    } else {
-      return true;
-    }
-  });
-});
-</script>
-{% endblock %}
-
 {% block title %}{{ suggestion.title }}{% endblock %}
 
 {% block content %}
 <form action="" method="post">
-<div style="height:50px">
-<div class="view"><h1>{{ suggestion.title }}</h1></div>
-<div class="edit">{{ reminder_form.title }}</div>
-</div>
+<h1>{{ reminder_form.title }}</h1>
 
 <table>
-<tr>
-<td>Every</td>
-<td class="view">{{ suggestion.interval }}</td>
-<td class="edit">{{ reminder_form.interval }}</td>
-</tr>
-
-<tr>
-<td>Tags:</td>
-<td class="view">{% for tag in suggestion.tags %}
-<a href="/tags/{{ tag }}/">{{ tag }}</a>
-{% endfor %}</td>
-<td class="edit">{{ reminder_form.tags }}</td>
-</tr>
-
+<tr><td>Every</td><td>{{ reminder_form.interval }}</td></tr>
+<tr><td>Tags:</td><td>{{ reminder_form.tags }}</td></tr>
 {% if request.user.is_anonymous %}
-<tr class="email">
-<td class="edit">Email:</td>
-<td class="edit">{{ reminder_form.email }}</td>
-</tr>
+<tr><td>Email:</td><td>{{ reminder_form.email }}</td></tr>
 {% endif %}
+<tr><td></td>
+<td><input type="submit" value="Create a reminder" id="button" /></td>
+</tr>
 </table>
-
-<p><input type="submit" value="Create a reminder" id="button" />
-<span class="edit" style="padding-left:1em">
-{% if request.user.is_anonymous %}Enter your email address,
-{% else %}{% if reminder_form.errors %}Correct the errors above,
-{% else %}Make changes if you want,
-{% endif%}{% endif %}then click the button again to save your reminder.</span>
-</p>
 </form>
 {% endblock %}
