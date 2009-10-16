@@ -12,5 +12,5 @@ urlpatterns = patterns('suggestions.views',
     url(r'^$', object_list,
         dict(info_dict, template_name='suggestions/index.html'),
         name='suggestion_list'),
-    url(r'^(?P<object_id>[a-z0-9-]+)/$', 'detail', name='suggestion_detail'),
+    url(r'^(?P<key_name>[a-z0-9-]+)/$', 'detail'),
 )

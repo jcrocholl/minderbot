@@ -3,14 +3,21 @@
 {% block title %}{{ reminder.title }}{% endblock %}
 
 {% block content %}
-<h1>{{ reminder.title }}</h1>
+<form action="" method="post">
+<div>{{ reminder_form.title }}</div>
 
-<p>Every {{ reminder.interval }}</p>
-
-<p>{% for tag in reminder.tags %}
-<a href="/tags/{{ tag }}/">{{ tag }}</a>
-{% endfor %}</p>
-
-<p class="small quiet">This reminder was created
-{{ reminder.created|timesince }} ago.</p>
+<table>
+<tr><td>Every</td><td>
+{{ reminder_form.days }} days or
+{{ reminder_form.months }} months or
+{{ reminder_form.years }} years or
+{{ reminder_form.miles }} miles or
+{{ reminder_form.kilometers }} kilometers
+</td></tr>
+<tr><td>Tags:</td><td>{{ reminder_form.tags }}</td></tr>
+<tr><td></td>
+<td><input type="submit" value="Create a reminder" id="button" /></td>
+</tr>
+</table>
+</form>
 {% endblock %}

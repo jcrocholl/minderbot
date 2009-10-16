@@ -1,3 +1,5 @@
+import logging
+
 from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
@@ -12,48 +14,20 @@ from utils.passwords import generate_password
 from reminders.models import Reminder
 
 
-class ReminderForm(forms.ModelForm):
-    title = forms.CharField(max_length=100,
-        widget=forms.TextInput(attrs={'class': 'h1 text span-17'}))
-    tags = forms.CharField(max_length=200,
-        widget=forms.TextInput(attrs={'class': 'text span-10'}))
-    days = forms.IntegerField(required=False,
-        widget=forms.TextInput(attrs={'class': 'text span-1'}))
-    months = forms.IntegerField(required=False,
-        widget=forms.TextInput(attrs={'class': 'text span-1'}))
-    years = forms.IntegerField(required=False,
-        widget=forms.TextInput(attrs={'class': 'text span-1'}))
-    miles = forms.IntegerField(required=False,
-        widget=forms.TextInput(attrs={'class': 'text span-2'}))
-    kilometers = forms.IntegerField(required=False,
-        widget=forms.TextInput(attrs={'class': 'text span-2'}))
-
-    class Meta:
-        model = Reminder
-        exclude = 'owner previous next created'.split()
-
-
 class EmailForm(forms.Form):
     email = forms.EmailField(max_length=200,
-        widget=forms.TextInput(attrs={'class': 'text span-6'}))
+        widget=forms.TextInput(attrs={'class': 'text span-6 focus'}))
 
 
-def detail(request, object_id):
+def detail(request, key_name):
     """
-    List all reminders for a registered user.
+    Show details for a public suggestion, and a button to create a
+    reminder from it.
     """
-    suggestion = get_object_or_404(Reminder, key_name=object_id)
-    reminder_form = ReminderForm(request.POST or None, initial={
-            'title': suggestion.title,
-            'tags': ' '.join(suggestion.tags),
-            'days': suggestion.days,
-            'months': suggestion.months,
-            'years': suggestion.years,
-            'miles': suggestion.miles,
-            'kilometers': suggestion.kilometers,
-            })
-    email_form = EmailForm(request.POST or None)
-    if reminder_form.is_valid():
+    suggestion = get_object_or_404(Reminder, key_name=key_name)
+    logging.debug(request.method)
+    email_form = EmailForm(request.POST)
+    if request.method == "POST":
         user = request.user
         if user.is_anonymous() and email_form.is_valid():
             email = email_form.cleaned_data['email']
@@ -63,18 +37,23 @@ def detail(request, object_id):
                     '/accounts/login/?email=%s&next=%s' %
                     (email, request.path))
             user = create_user(request, email)
-        if user.is_authenticated():
-            return create_reminder(request, user, reminder_form)
+        return create_reminder(request, user, suggestion)
     return render_to_response(
         request, 'suggestions/detail.html', locals())
 
 
-def create_reminder(request, user, reminder_form):
-    reminder = reminder_form.save(commit=False)
-    reminder.owner = user
-    reminder.tags = reminder_form.cleaned_data['tags'].split()
+def create_reminder(request, user, suggestion):
+    reminder = Reminder(
+        owner=user,
+        title=suggestion.title,
+        tags=suggestion.tags,
+        days=suggestion.days,
+        months=suggestion.months,
+        years=suggestion.years,
+        miles=suggestion.miles,
+        kilometers=suggestion.kilometers)
     reminder.put()
-    return HttpResponseRedirect('/reminders/')
+    return HttpResponseRedirect(reminder.get_absolute_url())
 
 
 def create_user(request, email):
@@ -83,6 +62,7 @@ def create_user(request, email):
     user = authenticate(username=email, password=password)
     assert user
     login(request, user)
+    assert user.is_authenticated()
     send_mail("Welcome to Minderbot", """\
 We have created a user account on www.minderbot.com for you.
 If you have not requested reminders for this email address,

@@ -32,11 +32,11 @@ class Reminder(db.Model):
 
     def get_absolute_url(self):
         if self.owner:
-            return reverse('reminder_detail',
-                           kwargs={'object_id': self.key().id()})
+            return reverse('reminders.views.detail',
+                           kwargs={'key_id': self.key().id()})
         else:
-            return reverse('suggestion_detail',
-                           kwargs={'object_id': self.key().name()})
+            return reverse('suggestions.views.detail',
+                           kwargs={'key_name': self.key().name()})
 
     def interval(self):
         weeks = None

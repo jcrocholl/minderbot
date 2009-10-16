@@ -3,29 +3,24 @@
 {% block title %}{{ suggestion.title }}{% endblock %}
 
 {% block content %}
-<form action="" method="post">
-<div>{{ reminder_form.title }}</div>
+<h1>{{ suggestion.title }}</h1>
 
-<table>
-<tr><td>Every</td><td>
-{{ reminder_form.days }} days or
-{{ reminder_form.months }} months or
-{{ reminder_form.years }} years or
-{{ reminder_form.miles }} miles or
-{{ reminder_form.kilometers }} kilometers
-</td></tr>
-<tr><td>Tags:</td><td>{{ reminder_form.tags }}</td></tr>
+<p>Every {{ suggestion.interval }}</p>
+
+<p>{% for tag in suggestion.tags %}
+<a href="/tags/{{ tag }}/">{{ tag }}</a>
+{% endfor %}</p>
+
+<form action="" method="post">
+<p>
 {% if request.user.is_anonymous %}
-<tr><td>Email:</td><td>{{ email_form.email }}</td></tr>
-{% else %}
-<tr>
-<td></td>
-<td><input type="hidden" name="email" value="{{ request.user.email }}" /></td>
-</tr>
+For automatic reminders, enter your email address here:<br />
+{{ email_form.email }}
 {% endif %}
-<tr><td></td>
-<td><input type="submit" value="Create a reminder" id="button" /></td>
-</tr>
-</table>
+<input type="submit" value="Create a reminder" id="button" />
+{% if request.user.is_authenticated %}
+for <b>{{ request.user.email }}</b>
+{% endif %}
+</p>
 </form>
 {% endblock %}
