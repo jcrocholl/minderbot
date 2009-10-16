@@ -2,6 +2,7 @@ import logging
 
 from django import forms
 from django.http import HttpResponseRedirect
+from django.contrib.auth.models import Message
 from django.contrib.auth.decorators import login_required
 
 from ragendja.template import render_to_response
@@ -45,4 +46,7 @@ def detail(request, key_id):
     reminder_form = ReminderForm(request.POST or None, instance=reminder)
     if reminder_form.is_valid():
         reminder_form.save()
+        Message(message='<p class="success message">%s</p>' %
+                "Your changes were saved successfully.",
+                user=request.user).put()
     return render_to_response(request, 'reminders/detail.html', locals())

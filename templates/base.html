@@ -20,6 +20,15 @@ lang="{% firstof LANGUAGE_CODE 'en' %}">
 <script type="text/javascript" src="{{ MEDIA_URL }}combined-{{ LANGUAGE_CODE }}.js"></script>
 {% endblock %}
 
+{% block jquery %}
+<script type="text/javascript">
+$(document).ready(function() {
+  $('p.message').fadeOut(10000);
+  $('input.focus:last').focus();
+});
+</script>
+{% endblock %}
+
 {% block extra-head %}{% endblock %}
 </head>
 
@@ -51,11 +60,8 @@ Welcome, {{ user }} |
 {% block content-header %}
 {% if error %}<div class="error">{{ error }}</div>{% endif %}
 {% if info %}<div class="info">{{ info }}</div>{% endif %}
-{% if messages %}
-{% for message in messages %}
-<div class="info">{{ message }}</div>
+{% for message in messages %}{{ message|safe }}
 {% endfor %}
-{% endif %}
 {% endblock %}
 {% block content %}{% endblock %}
 </div>

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Message
 
 from ragendja.template import render_to_response
 from ragendja.dbutils import get_object_or_404
@@ -53,6 +53,9 @@ def create_reminder(request, user, suggestion):
         miles=suggestion.miles,
         kilometers=suggestion.kilometers)
     reminder.put()
+    Message(message='<p class="success message">%s</p>' %
+            "Your reminder was created successfully. You can edit it below.",
+            user=user).put()
     return HttpResponseRedirect(reminder.get_absolute_url())
 
 
