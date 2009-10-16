@@ -20,7 +20,7 @@ class Tag(db.Model):
                        kwargs={'key_name': self.key().name()})
 
     def get_font_size(self):
-        pixels = 12 + min(20, self.count)
+        pixels = 14 + min(20, self.count)
         return '%dpx' % pixels
 
     def get_suggestions(self):

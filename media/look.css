@@ -1,7 +1,10 @@
 body { padding: 20px 20px; }
 
+h1 {
+  font-size: 2em;
+}
 h2 {
-  font-size: 20px;
+  font-size: 1.6em;
   line-height: 36px;
   margin-bottom: 0;
 }
@@ -11,10 +14,6 @@ h2.error, h2.success {
   margin-bottom: 0.4em;
 }
 
-p,th,td,li {
-  font-size: 14px;
-  line-height: 18px;
-}
 div.small {
   margin: 0;
 }
@@ -31,14 +30,6 @@ div.small {
 table.form { width: 44em; }
 table.form th { padding: 0 1em 0 0; }
 table.form td { padding: 0; }
-
-body.welcome div#content ol,
-body.welcome div#content li,
-body.welcome div#content p {
-  font-size: x-large;
-  line-height: 1.33;
-  margin-bottom: .5em;
-}
 
 input.h1 {
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
