@@ -10,7 +10,7 @@ from django.contrib.auth.models import User, Message
 from ragendja.template import render_to_response
 from ragendja.dbutils import get_object_or_404
 
-from utils.passwords import generate_password
+from utils.english_passwords import generate_password
 from reminders.models import Reminder
 
 
