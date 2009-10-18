@@ -85,8 +85,8 @@ class AdminTest(TestCase):
         # Check that the missing submitter is detected.
         response = self.client.get('/consistency/')
         self.assertTrue('feedback_submitter' in response.context['problems'])
-        self.assertTrue("Feedback foo references a missing submitter."
-                        in response.content)
+        self.assertTrue("Missing submitters" in response.content)
+        self.assertTrue("references a missing submitter." in response.content)
         # Simulate button click to fix this problem.
         response = self.client.post('/consistency/',
                                     {'feedback_submitter': "Make anonymous"})
