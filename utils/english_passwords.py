@@ -106,7 +106,7 @@ def generate_password(digits=0):
 def count_groups(filename='wordlist.txt'):
     groups = {}
     for word in open(filename):
-        word = '^' + word.strip() + '$'
+        word = '^' + word.strip().lower() + '$'
         index = 0
         v_group = c_group = ''
         while index < len(word):
